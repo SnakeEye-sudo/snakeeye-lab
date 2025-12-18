@@ -145,8 +145,6 @@ Every project answers: *What did I learn? Why? How does it connect to my growth 
 ## 📞 Connect
 
 - **GitHub**: [@SnakeEye-sudo](https://github.com/SnakeEye-sudo)
-- **Email**: [Your email]
-- **LinkedIn**: [Your profile]
 
 ---
 
