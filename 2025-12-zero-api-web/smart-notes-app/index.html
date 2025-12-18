@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Notes App - Zero API</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 Smart Notes</h1>
+            <p>Keep your thoughts organized. Zero API. All local.</p>
+        </header>
+
+        <div class="controls">
+            <input type="text" id="noteTitle" placeholder="Note title..." />
+            <textarea id="noteContent" placeholder="Write your note here..."></textarea>
+            <div class="button-group">
+                <button id="saveBtn" class="btn btn-save">Save Note</button>
+                <button id="clearBtn" class="btn btn-clear">Clear</button>
+            </div>
+        </div>
+
+        <div class="search-filter">
+            <input type="text" id="searchBox" placeholder="Search notes..." />
+            <select id="sortBy">
+                <option value="recent">Most Recent</option>
+                <option value="oldest">Oldest First</option>
+                <option value="title">By Title (A-Z)</option>
+            </select>
+        </div>
+
+        <div id="notesList" class="notes-list"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
