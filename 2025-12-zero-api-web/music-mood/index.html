@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 MusicMood - Mood Based Music Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+        .header {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .mood-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .mood-btn {
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: #f5f5f5;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .mood-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-5px);
+        }
+        .mood-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        .songs {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        .song-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+        .song-item:hover {
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        .now-playing {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #764ba2;
+            transform: scale(1.05);
+        }
+        .stats {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f4ff;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">🎵 MusicMood</div>
+        <h1>Mood Based Music Player</h1>
+        
+        <div class="mood-selector" id="moods"></div>
+        
+        <div class="now-playing" id="nowPlaying">Select a mood to start</div>
+        
+        <div class="songs" id="songsList"></div>
+        
+        <div class="controls">
+            <button onclick="app.playPause()">▶️ Play/Pause</button>
+            <button onclick="app.nextSong()">⏭️ Next</button>
+            <button onclick="app.clearHistory()">🗑️ Clear</button>
+        </div>
+        
+        <div class="stats">
+            <p>Songs Played: <strong id="playCount">0</strong></p>
+            <p>Current Mood: <strong id="currentMood">None</strong></p>
+        </div>
+    </div>
+
+    <script>
+        const moods = {
+            'Happy': ['Levitating - Dua Lipa', 'Good as Hell - Lizzo', 'Walking on Sunshine - Katrina', 'Don\'t Stop Me Now - Queen'],
+            'Chill': ['Wonderwall - Oasis', 'Skinny Love - Bon Iver', 'Somebody Else - The 1975', 'Lost - Frank Ocean'],
+            'Energetic': ['Blinding Lights - The Weeknd', 'Uptown Funk - Mark Ronson', 'Take On Me - a-ha', 'Eye of the Tiger - Survivor'],
+            'Sad': ['Someone Like You - Adele', 'Tears in Heaven - Eric Clapton', 'The Night We Met - Lord Huron', 'Hurt - Johnny Cash']
+        };
+
+        const app = {
+            currentMood: null,
+            currentSongIndex: 0,
+            isPlaying: false,
+            playCount: 0,
+
+            init() {
+                this.loadState();
+                this.renderMoods();
+            },
+
+            renderMoods() {
+                const moodelement = document.getElementById('moods');
+                moodelement.innerHTML = Object.keys(moods).map(mood => `
+                    <button class="mood-btn${this.currentMood === mood ? ' active' : ''}" 
+                            onclick="app.selectMood('${mood}')">
+                        ${mood === 'Happy' ? '😊' : mood === 'Chill' ? '😌' : mood === 'Energetic' ? '🔥' : '😢'} ${mood}
+                    </button>
+                `).join('');
+            },
+
+            selectMood(mood) {
+                this.currentMood = mood;
+                this.currentSongIndex = 0;
+                this.isPlaying = true;
+                this.playCount++;
+                this.saveState();
+                this.updateUI();
+            },
+
+            playPause() {
+                if (!this.currentMood) return alert('Select a mood first!');
+                this.isPlaying = !this.isPlaying;
+                this.saveState();
+                this.updateUI();
+            },
+
+            nextSong() {
+                if (!this.currentMood) return alert('Select a mood first!');
+                this.currentSongIndex = (this.currentSongIndex + 1) % moods[this.currentMood].length;
+                this.playCount++;
+                this.saveState();
+                this.updateUI();
+            },
+
+            clearHistory() {
+                if (confirm('Clear all history?')) {
+                    this.currentMood = null;
+                    this.currentSongIndex = 0;
+                    this.isPlaying = false;
+                    this.playCount = 0;
+                    localStorage.removeItem('musicMoodState');
+                    this.renderMoods();
+                    this.updateUI();
+                }
+            },
+
+            updateUI() {
+                const nowPlaying = document.getElementById('nowPlaying');
+                const songsList = document.getElementById('songsList');
+                const playCount = document.getElementById('playCount');
+                const currentMood = document.getElementById('currentMood');
+
+                this.renderMoods();
+                playCount.textContent = this.playCount;
+                currentMood.textContent = this.currentMood || 'None';
+
+                if (!this.currentMood) {
+                    nowPlaying.textContent = 'Select a mood to start';
+                    songsList.innerHTML = '';
+                    return;
+                }
+
+                const currentSong = moods[this.currentMood][this.currentSongIndex];
+                nowPlaying.innerHTML = `<strong>${this.isPlaying ? '▶️' : '⏸️'}</strong> ${currentSong}<br><em>${this.currentMood}</em>`;
+                
+                songsList.innerHTML = moods[this.currentMood].map((song, i) => `
+                    <div class="song-item" onclick="app.playSongAtIndex(${i})">
+                        ${i === this.currentSongIndex ? '📍 ' : '🎵 '} ${song}
+                    </div>
+                `).join('');
+            },
+
+            playSongAtIndex(index) {
+                this.currentSongIndex = index;
+                this.isPlaying = true;
+                this.playCount++;
+                this.saveState();
+                this.updateUI();
+            },
+
+            saveState() {
+                localStorage.setItem('musicMoodState', JSON.stringify({
+                    currentMood: this.currentMood,
+                    currentSongIndex: this.currentSongIndex,
+                    isPlaying: this.isPlaying,
+                    playCount: this.playCount
+                }));
+            },
+
+            loadState() {
+                const saved = localStorage.getItem('musicMoodState');
+                if (saved) {
+                    const state = JSON.parse(saved);
+                    this.currentMood = state.currentMood;
+                    this.currentSongIndex = state.currentSongIndex;
+                    this.isPlaying = state.isPlaying;
+                    this.playCount = state.playCount;
+                    this.updateUI();
+                } else {
+                    this.updateUI();
+                }
+            }
+        };
+
+        app.init();
+    </script>
+</body>
+</html>
