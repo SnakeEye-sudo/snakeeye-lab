@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 HeartSync - Couple Compatibility Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 32px;
+            color: #ff6b9d;
+            margin-bottom: 10px;
+        }
+        .names-input {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        input {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #ff6b9d;
+            box-shadow: 0 0 10px rgba(255, 107, 157, 0.2);
+        }
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff5f8;
+            border-radius: 10px;
+            border-left: 4px solid #ff6b9d;
+        }
+        .question p {
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .option-btn {
+            padding: 10px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #666;
+            font-size: 13px;
+        }
+        .option-btn:hover {
+            border-color: #ff6b9d;
+            background: #ffe0ed;
+        }
+        .option-btn.selected {
+            background: #ff6b9d;
+            color: white;
+            border-color: #ff6b9d;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #ff6b9d;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #c44569;
+            transform: translateY(-2px);
+        }
+        .results {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            color: white;
+            border-radius: 15px;
+            margin-top: 20px;
+            display: none;
+        }
+        .results.show {
+            display: block;
+        }
+        .results .score {
+            font-size: 48px;
+            font-weight: 900;
+            margin: 20px 0;
+        }
+        .history {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+        .history-item {
+            padding: 8px;
+            background: white;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💕 HeartSync</h1>
+            <p>Test Your Couple Compatibility!</p>
+        </div>
+
+        <div class="names-input">
+            <input type="text" id="name1" placeholder="Your Name" maxlength="20">
+            <input type="text" id="name2" placeholder="Partner's Name" maxlength="20">
+        </div>
+
+        <div id="questions"></div>
+
+        <div class="btn-group">
+            <button onclick="app.submitQuiz()">Submit Quiz</button>
+            <button onclick="app.resetQuiz()">Reset</button>
+        </div>
+
+        <div class="results" id="results"></div>
+
+        <div class="history" id="historyDiv" style="display: none;">
+            <h4>📚 Quiz History:</h4>
+            <div id="historyList"></div>
+            <button onclick="app.clearHistory()" style="margin-top: 10px; width: 100%;">Clear History</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { q: 'How long have you known each other?', opts: ['<1 year', '1-2 years', '3-5 years', '5+ years'] },
+            { q: 'Who usually makes decisions?', opts: ['Me', 'Partner', 'Together', 'Depends'] },
+            { q: 'Favorite time together?', opts: ['Adventure', 'Relaxing', 'Learning', 'Socializing'] },
+            { q: 'How often communicate?', opts: ['Constantly', 'Daily', 'Often', 'Regularly'] },
+            { q: 'Financial compatibility?', opts: ['Very similar', 'Similar', 'Different', 'Opposite'] },
+            { q: 'Conflict resolution?', opts: ['Discuss', 'Space', 'Compromise', 'Avoid'] },
+            { q: 'Future plans match?', opts: ['Fully', 'Mostly', 'Somewhat', 'Different'] },
+            { q: 'Love language?', opts: ['Words', 'Touch', 'Acts', 'Gifts'] }
+        ];
+
+        const app = {
+            answers: {},
+            history: [],
+
+            init() {
+                this.loadHistory();
+                this.render();
+            },
+
+            render() {
+                const div = document.getElementById('questions');
+                div.innerHTML = questions.map((q, i) => `
+                    <div class="question">
+                        <p>${i + 1}. ${q.q}</p>
+                        <div class="options">
+                            ${q.opts.map(opt => `
+                                <button class="option-btn" onclick="app.select(${i}, '${opt}')" id="a${i}${opt}">${opt}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+                this.showHistory();
+            },
+
+            select(i, opt) {
+                this.answers[i] = opt;
+                document.querySelectorAll(`#a${i}*`).forEach(b => b.classList.remove('selected'));
+                document.getElementById(`a${i}${opt}`).classList.add('selected');
+            },
+
+            submitQuiz() {
+                const n1 = document.getElementById('name1').value || 'You';
+                const n2 = document.getElementById('name2').value || 'Partner';
+                if (Object.keys(this.answers).length < questions.length) {
+                    alert('Answer all questions!');
+                    return;
+                }
+                const score = Math.floor(Math.random() * 30) + 70;
+                this.history.push({ n1, n2, score, time: new Date().toLocaleString() });
+                this.saveHistory();
+                const msgs = [`${n1} ❤ ${n2}: Perfect Match!`, `${n1} ❤ ${n2}: Great!`, `${n1} ❤ ${n2}: Good!`, `${n1} ❤ ${n2}: Fair!`];
+                const idx = score >= 90 ? 0 : score >= 85 ? 1 : score >= 80 ? 2 : 3;
+                document.getElementById('results').innerHTML = `<h2>💝 Results 💝</h2><div class="score">${score}%</div><div>${msgs[idx]}</div>`;
+                document.getElementById('results').classList.add('show');
+                this.showHistory();
+            },
+
+            resetQuiz() {
+                this.answers = {};
+                document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                document.getElementById('name1').value = '';
+                document.getElementById('name2').value = '';
+                document.getElementById('results').classList.remove('show');
+            },
+
+            saveHistory() {
+                localStorage.setItem('heartSync', JSON.stringify(this.history));
+            },
+
+            loadHistory() {
+                const saved = localStorage.getItem('heartSync');
+                this.history = saved ? JSON.parse(saved) : [];
+            },
+
+            showHistory() {
+                if (this.history.length === 0) return;
+                const div = document.getElementById('historyDiv');
+                document.getElementById('historyList').innerHTML = this.history.slice(-5).reverse().map(h => `<div class="history-item"><strong>${h.n1} ❤ ${h.n2}</strong>: ${h.score}% | ${h.time}</div>`).join('');
+                div.style.display = 'block';
+            },
+
+            clearHistory() {
+                if (confirm('Clear history?')) {
+                    this.history = [];
+                    localStorage.removeItem('heartSync');
+                    document.getElementById('historyDiv').style.display = 'none';
+                }
+            }
+        };
+
+        app.init();
+    </script>
+</body>
+</html>
