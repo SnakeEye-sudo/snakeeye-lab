@@ -259,11 +259,7 @@
 			card.onclick = () => {
 			const monthName = card.querySelector('h3')?.textContent?.trim() || '';
 			const month = MONTHS.find(m => m.name === monthName);
-			if (month && month.projects && month.projects.length > 0) {
-				const projectList = month.projects.map((p, i) => `${i+1}. ${p.name}`).join('\n');
-				const msg = `${monthName}\n\nProjects:\n${projectList}\n\nOpening first project: ${month.projects[0].name}`;
-				alert(msg);
-				window.open(month.projects[0].url, '_self');
+if (month) { const branchNames = { '2025-12': '2025-12-zero-api-web', '2026-01': '2026-01-security', '2026-02': '2026-02-ai-ml', '2026-03': '2026-03-creative-3d', '2026-04': '2026-04-data-dashboards', '2026-05': '2026-05-dev-tools', '2026-06': '2026-06-testing', '2026-07': '2026-07-performance', '2026-08': '2026-08-backend', '2026-09': '2026-09-distributed', '2026-10': '2026-10-opensource', '2026-11': '2026-11-real-world', '2026-12': '2026-12-portfolio' }; const branchName = branchNames[month.id]; if (branchName) { window.open(`https://github.com/SnakeEye-sudo/snakeeye-lab/tree/${branchName}`, '_blank'); }
 			}
 		}
 		};
