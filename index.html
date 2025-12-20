@@ -43,7 +43,7 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .dashboard-header { text-align: center; margin-bottom: 50px; }
         .dashboard-header h1 { font-size: 2.5em; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 15px; }
-renderMonths
+
 		.dashboard-header p { color: #666; font-size: 1.05em; }
         body.focus-mode .dashboard-header p { color: #aaa; }
 		.months-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 40px; }        .month-card { background: var(--bg-light); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid transparent; position: relative; cursor: pointer; min-height: 200px; }
@@ -259,19 +259,37 @@ renderMonths
             document.getElementById('passwordInput').onkeypress = (e) => e.key === 'Enter' && handleAuth();
             document.getElementById('nameInput').onkeypress = (e) => e.key === 'Enter' && document.getElementById('passwordInput').focus();
             document.getElementById('toggleAuthBtn').onclick = toggleAuthMode;
-            		const monthCards = document.querySelectorAll('.month-card:not(.locked)');
-		monthCards.forEach(card => {
-			const monthName = card.querySelector('h3')?.textContent?.trim() || '';
-			const monthData = MONTHS.find(m => m.name === monthName);
-			card.onclick = () => {
-			const monthName = card.querySelector('h3')?.textContent?.trim() || '';
-			const month = MONTHS.find(m => m.name === monthName);
-if (month) { const branchNames = { '2025-12': '2025-12-zero-api-web', '2026-01': '2026-01-security', '2026-02': '2026-02-ai-ml', '2026-03': '2026-03-creative-3d', '2026-04': '2026-04-data-dashboards', '2026-05': '2026-05-dev-tools', '2026-06': '2026-06-testing', '2026-07': '2026-07-performance', '2026-08': '2026-08-backend', '2026-09': '2026-09-distributed', '2026-10': '2026-10-opensource', '2026-11': '2026-11-real-world', '2026-12': '2026-12-portfolio' }; const branchName = branchNames[month.id]; if (branchName) { window.open(`https://github.com/SnakeEye-sudo/snakeeye-lab/tree/${branchName}`, '_blank'); }
-			}
-		}
-		};
-	})
-	}
+            const monthCards = document.querySelectorAll('.month-card:not(.locked)');
+            const branchNames = { 
+                '2025-12': '2025-12-zero-api-web', 
+                '2026-01': '2026-01-security', 
+                '2026-02': '2026-02-ai-ml', 
+                '2026-03': '2026-03-creative-3d', 
+                '2026-04': '2026-04-data-dashboards', 
+                '2026-05': '2026-05-dev-tools', 
+                '2026-06': '2026-06-testing', 
+                '2026-07': '2026-07-performance', 
+                '2026-08': '2026-08-backend', 
+                '2026-09': '2026-09-distributed', 
+                '2026-10': '2026-10-opensource', 
+                '2026-11': '2026-11-real-world', 
+                '2026-12': '2026-12-portfolio' 
+            };
+
+            monthCards.forEach(card => {
+                const monthName = card.querySelector('h3')?.textContent?.trim() || '';
+                const month = MONTHS.find(m => m.name === monthName); // Use global MONTHS
+                
+                if (month) {
+                    card.onclick = () => {
+                        const branchName = branchNames[month.id];
+                        if (branchName) {
+                            window.open(`https://github.com/SnakeEye-sudo/snakeeye-lab/tree/${branchName}`, '_blank');
+                        }
+                    };
+                }
+            });
+        }
 
         function toggleAuthMode() {
             if (authMode === 'login') {
@@ -340,7 +358,7 @@ if (month) { const branchNames = { '2025-12': '2025-12-zero-api-web', '2026-01':
             location.reload();
         }
 
-        353
+        function renderMonths() {
             const grid = document.getElementById('monthsGrid');
             grid.innerHTML = '';
             MONTHS.forEach(month => {
@@ -350,7 +368,7 @@ if (month) { const branchNames = { '2025-12': '2025-12-zero-api-web', '2026-01':
                     <div class="status-badge ${month.status}">${month.status.toUpperCase()}</div>
                     <h3>${month.name}</h3>
                     <p>${month.theme}</p>
-                    ${month.projects.length > 0 ? `<p style="font-size: 0.9em; color: var(--success); font-weight: 500;">📦 Projects: ${month.projects.join(', ')}</p>` : ''}
+                    ${month.projects && month.projects.length > 0 ? `<p style="font-size: 0.9em; color: var(--success); font-weight: 500;">📦 Projects: ${month.projects.map(p => p.name).join(', ')}</p>` : ''}
                     <div class="lock-icon">🔒<p>Unlock ${month.name}</p></div>
                 `;
                 grid.appendChild(card);
