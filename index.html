@@ -261,20 +261,19 @@
             document.getElementById('toggleAuthBtn').onclick = toggleAuthMode;
             const monthCards = document.querySelectorAll('.month-card:not(.locked)');
             const branchNames = { 
-                '2025-12': '2025-12-zero-api-web', 
-                '2026-01': '2026-01-security', 
-                '2026-02': '2026-02-ai-ml', 
-                '2026-03': '2026-03-creative-3d', 
-                '2026-04': '2026-04-data-dashboards', 
-                '2026-05': '2026-05-dev-tools', 
-                '2026-06': '2026-06-testing', 
-                '2026-07': '2026-07-performance', 
-                '2026-08': '2026-08-backend', 
-                '2026-09': '2026-09-distributed', 
-                '2026-10': '2026-10-opensource', 
-                '2026-11': '2026-11-real-world', 
-                '2026-12': '2026-12-portfolio' 
-            };
+    '2025-12': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2025-12-zero-api-web',                '2026-01': '2026-01-security', 
+                '2026-01': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-01-security',
+                '2026-02': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-02-ai-ml',
+                '2026-03': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-03-creative-3d',
+                '2026-04': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-04-data-dashboards',
+                '2026-05': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-05-dev-tools',
+                '2026-06': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-06-testing',
+                '2026-07': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-07-performance',
+                '2026-08': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-08-backend',
+                '2026-09': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-09-distributed',
+                '2026-10': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-10-opensource',
+                '2026-11': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-11-real-world',
+            '2026-12': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-12-portfolio'
 
             monthCards.forEach(card => {
                 const monthName = card.querySelector('h3')?.textContent?.trim() || '';
