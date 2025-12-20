@@ -206,24 +206,6 @@ renderMonths
         let authMode = 'register';
         let currentUser = null;
 
-function renderMonths() {
-		const grid = document.getElementById('monthsGrid');
-		if (!grid) return;
-		grid.innerHTML = '';
-		MONTHS.forEach(month => {
-			const card = document.createElement('div');
-			card.className = 'month-card ' + month.status;
-			let html = '<div class="status-badge ' + month.status + '">' + month.status.toUpperCase() + '</div>';
-			html += '<h3>' + month.theme + '</h3>';
-			html += '<p>' + month.name + '</p>';
-			if (month.projects && month.projects.length > 0) {
-				html += '<div><p style="font-size: 0.9em; color: var(--success);">🔓Unlock ' + month.name + '</p></div>';
-			}
-			card.innerHTML = html;
-			grid.appendChild(card);
-		});
-	}
-
 		  	function loadUsers() {
 		// Load users from localStorage
 		const saved = localStorage.getItem('snakeeye_users');
@@ -358,7 +340,7 @@ if (month) { const branchNames = { '2025-12': '2025-12-zero-api-web', '2026-01':
             location.reload();
         }
 
-        function renderMonths() {
+        353
             const grid = document.getElementById('monthsGrid');
             grid.innerHTML = '';
             MONTHS.forEach(month => {
