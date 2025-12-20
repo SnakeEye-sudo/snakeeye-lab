@@ -189,8 +189,7 @@
 
       <script>
         const MONTHS = [
-            { id: "2025-12", name: "December 2025", theme: "Zero-API Web Apps", status: "active", projects: ["Smart Notes", "Task Manager", "HeartSync"] },
-            { id: "2026-01", name: "January 2026", theme: "Security & Tools", status: "locked", projects: [] },
+			{ id: "2025-12", name: "December 2025", theme: "Zero-API Web Apps", status: "active", projects: [{name: "Smart Notes", url: "./2025-12-zero-api-web/smart-notes-app/index.html"}, {name: "Task Manager", url: "./2025-12-zero-api-web/task-manager/index.html"}, {name: "HeartSync", url: "./2025-12-zero-api-web/heart-sync/index.html"}] }            { id: "2026-01", name: "January 2026", theme: "Security & Tools", status: "locked", projects: [] },
             { id: "2026-02", name: "February 2026", theme: "AI/ML Local Experiments", status: "locked", projects: [] },
             { id: "2026-03", name: "March 2026", theme: "Creative Coding & 3D", status: "locked", projects: [] },
             { id: "2026-04", name: "April 2026", theme: "Data Dashboards", status: "locked", projects: [] },
@@ -255,8 +254,17 @@
             document.getElementById('toggleAuthBtn').onclick = toggleAuthMode;
             		const monthCards = document.querySelectorAll('.month-card:not(.locked)');
 		monthCards.forEach(card => {
-			card.onclick = () => alert('Month clicked: ' + card.querySelector('h3').textContent);
-		});
+		const monthData = MONTHS.find(m => m.id === card.getAttribute('data-month-id'));
+		card.onclick = () => {
+			if (monthData && monthData.projects && monthData.projects.length > 0) {
+				const projectLinks = monthData.projects.map(p => 
+					`<li><a href="${p.url}" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 600;">${p.name} →</a></li>`
+				).join('');
+				alert(`${monthData.name}\n\nProjects:\n\n${monthData.projects.map(p => p.name).join('\n')}\n\nClick project links in browser console or open project folder.`);
+				window.location.href = monthData.projects[0].url;
+			}
+		};
+	})
             
         }
 
