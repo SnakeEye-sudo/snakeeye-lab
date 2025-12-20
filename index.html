@@ -206,18 +206,20 @@ renderMonths
         let authMode = 'register';
         let currentUser = null;
 
-		  	function renderMonths() {
+function renderMonths() {
 		const grid = document.getElementById('monthsGrid');
+		if (!grid) return;
 		grid.innerHTML = '';
 		MONTHS.forEach(month => {
 			const card = document.createElement('div');
 			card.className = 'month-card ' + month.status;
-			card.innerHTML = `
-				<div class="status-badge ${month.status}">${month.status.toUpperCase()}</div>
-				<h3>${month.theme}</h3>
-				<p>${month.name}</p>
-				<div>${month.projects.length > 0 ? `<p style="font-size: 0.9em; color: var(--success);">🔓Unlock ${month.name}</p>` : ''}</div>
-			`;
+			let html = '<div class="status-badge ' + month.status + '">' + month.status.toUpperCase() + '</div>';
+			html += '<h3>' + month.theme + '</h3>';
+			html += '<p>' + month.name + '</p>';
+			if (month.projects && month.projects.length > 0) {
+				html += '<div><p style="font-size: 0.9em; color: var(--success);">🔓Unlock ' + month.name + '</p></div>';
+			}
+			card.innerHTML = html;
 			grid.appendChild(card);
 		});
 	}
