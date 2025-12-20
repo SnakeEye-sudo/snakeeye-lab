@@ -257,13 +257,15 @@
 			const monthName = card.querySelector('h3')?.textContent?.trim() || '';
 			const monthData = MONTHS.find(m => m.name === monthName);
 			card.onclick = () => {
-			if (monthData && monthData.projects && monthData.projects.length > 0) {
-				const projectLinks = monthData.projects.map(p => 
-					`<li><a href="${p.url}" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 600;">${p.name} →</a></li>`
-				).join('');
-				alert(`${monthData.name}\n\nProjects:\n\n${monthData.projects.map(p => p.name).join('\n')}\n\nClick project links in browser console or open project folder.`);
-				window.location.href = monthData.projects[0].url;
+			const monthName = card.querySelector('h3')?.textContent?.trim() || '';
+			const month = MONTHS.find(m => m.name === monthName);
+			if (month && month.projects && month.projects.length > 0) {
+				const projectList = month.projects.map((p, i) => `${i+1}. ${p.name}`).join('\n');
+				const msg = `${monthName}\n\nProjects:\n${projectList}\n\nOpening first project: ${month.projects[0].name}`;
+				alert(msg);
+				window.open(month.projects[0].url, '_self');
 			}
+		}
 		};
 	})
 	}
