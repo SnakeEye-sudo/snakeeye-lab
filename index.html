@@ -224,6 +224,13 @@ function renderMonths() {
 		});
 	}
 
+		  	function loadUsers() {
+		// Load users from localStorage
+		const saved = localStorage.getItem('snakeeye_users');
+		if (!saved) return;
+		// Users exist, can show quick login buttons
+	}
+
         function initApp() {
             loadUsers();
             renderMonths();
