@@ -254,8 +254,9 @@
             document.getElementById('toggleAuthBtn').onclick = toggleAuthMode;
             		const monthCards = document.querySelectorAll('.month-card:not(.locked)');
 		monthCards.forEach(card => {
-		const monthData = MONTHS.find(m => m.id === card.getAttribute('data-month-id'));
-		card.onclick = () => {
+			const monthName = card.querySelector('h3')?.textContent?.trim() || '';
+			const monthData = MONTHS.find(m => m.name === monthName);
+			card.onclick = () => {
 			if (monthData && monthData.projects && monthData.projects.length > 0) {
 				const projectLinks = monthData.projects.map(p => 
 					`<li><a href="${p.url}" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 600;">${p.name} →</a></li>`
