@@ -3,401 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SnakeEye Lab - 12 Month Journey (Dec 2025 - Dec 2026)</title>
+    <title>SnakeEye Lab - Dashboard</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root { --primary: #667eea; --secondary: #764ba2; --success: #4caf50; --bg-dark: #0f1419; --bg-light: #ffffff; }
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); min-height: 100vh; color: #1a1a1a; transition: all 0.3s; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); min-height: 100vh; transition: all 0.3s; }
         body.focus-mode { background: var(--bg-dark); color: #ddd; }
-        .hidden { display: none !important; }
         .auth-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         .auth-box { background: var(--bg-light); border-radius: 16px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 400px; width: 100%; animation: slideUp 0.5s ease-out; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .auth-box h2 { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px; font-size: 2em; text-align: center; }
+        .auth-box h2 { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; font-size: 2em; text-align: center; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
-        .form-group input { width: 100%; padding: 12px 15px; border: 2px solid #e8e8f0; border-radius: 8px; font-size: 1em; font-family: inherit; transition: all 0.3s; }
+        .form-group input { width: 100%; padding: 12px 15px; border: 2px solid #e8e8f0; border-radius: 8px; font-size: 1em; transition: all 0.3s; }
         .form-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
-        .auth-buttons { display: flex; gap: 10px; margin-top: 25px; }
-        .btn { flex: 1; padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 1em; }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; font-size: 1em; transition: all 0.3s; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; margin-top: 20px; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102,126,234,0.4); }
-        .btn-secondary { background: #f0f0f0; color: var(--primary); border: 2px solid var(--primary); }
-        .btn-secondary:hover { background: var(--primary); color: white; }
-        #existingUsers { margin-top: 20px; }
-        .user-quick-btn { background: rgba(102,126,234,0.1); border: 2px solid var(--primary); color: var(--primary); padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; margin-bottom: 10px; width: 100%; }
-        .user-quick-btn:hover { background: var(--primary); color: white; }
+        .hidden { display: none !important; }
         .app-container { display: none; min-height: 100vh; padding-bottom: 80px; background: linear-gradient(135deg, #f5f7ff 0%, #f9f5ff 100%); }
         .app-container.active { display: block; }
-        body.focus-mode .app-container { background: var(--bg-dark); }
         .app-header { background: var(--bg-light); padding: 20px 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
-        body.focus-mode .app-header { background: #1a1a1a; }
-        .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-        .logo { font-size: 1.8em; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .user-info { display: flex; gap: 10px; align-items: center; }
-        .user-info span { font-weight: 600; }
-        body.focus-mode .user-info span { color: #ddd; }
+        .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.8em; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .main-content { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-        .page-section { display: none; }
-        .page-section.active { display: block; animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .dashboard-header { text-align: center; margin-bottom: 50px; }
-        .dashboard-header h1 { font-size: 2.5em; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 15px; }
-
-		.dashboard-header p { color: #666; font-size: 1.05em; }
-        body.focus-mode .dashboard-header p { color: #aaa; }
-		.months-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 40px; }        .month-card { background: var(--bg-light); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid transparent; position: relative; cursor: pointer; min-height: 200px; }
-        body.focus-mode .month-card { background: #2a2a2a; }
+        .dashboard-header h1 { font-size: 2.5em; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px; }
+        .months-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .month-card { background: var(--bg-light); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid transparent; cursor: pointer; min-height: 200px; }
         .month-card:hover:not(.locked) { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(102,126,234,0.3); border-color: var(--primary); }
         .month-card.locked { opacity: 0.6; cursor: not-allowed; }
         .month-card h3 { font-size: 1.4em; margin-bottom: 8px; color: #1a1a1a; }
-        body.focus-mode .month-card h3 { color: #ddd; }
         .month-card p { color: #666; margin-bottom: 15px; font-size: 0.95em; }
-        body.focus-mode .month-card p { color: #aaa; }
-        .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 0.75em; font-weight: 700; margin-bottom: 15px; letter-spacing: 0.5px; }
+        .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 0.75em; font-weight: 700; margin-bottom: 15px; }
         .status-badge.active { background: rgba(76,175,80,0.1); color: var(--success); }
         .status-badge.locked { background: rgba(200,200,200,0.1); color: #999; }
-        .lock-icon { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 3em; background: rgba(255,255,255,0.85); backdrop-filter: blur(2px); border-radius: 12px; opacity: 0; transition: all 0.3s; pointer-events: none; }
-        .month-card.locked .lock-icon { opacity: 1; }
-        .lock-icon p { font-size: 0.35em; color: #666; margin-top: 10px; font-weight: 600; }
-        .countdown { font-size: 0.85em; color: #666; margin-top: 10px; }
-        body.focus-mode .countdown { color: #aaa; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-light); border-top: 1px solid #e8e8f0; display: flex; justify-content: center; z-index: 200; box-shadow: 0 -4px 20px rgba(0,0,0,0.08); }
-        body.focus-mode .bottom-nav { background: #1a1a1a; border-top-color: #444; }
-        .nav-item { flex: 1; padding: 12px; text-align: center; cursor: pointer; transition: all 0.3s; color: #666; font-weight: 600; border-top: 3px solid transparent; font-size: 0.9em; }
+        .project-list { font-size: 0.9em; color: #555; }
+        .lock-icon { display: none; text-align: center; font-size: 3em; margin: 20px 0; }
+        .month-card.locked .lock-icon { display: block; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-light); border-top: 1px solid #e8e8f0; display: flex; justify-content: center; z-index: 200; }
+        .nav-item { flex: 1; padding: 12px; text-align: center; cursor: pointer; color: #666; font-weight: 600; border-top: 3px solid transparent; transition: all 0.3s; }
         .nav-item:hover { background: rgba(102,126,234,0.05); color: var(--primary); }
-        .nav-item.active { color: var(--primary); border-top-color: var(--primary); background: rgba(102,126,234,0.05); }
-        body.focus-mode .nav-item { color: #aaa; }
-        body.focus-mode .nav-item.active { color: #667eea; }
-        .settings-content { background: var(--bg-light); border-radius: 16px; padding: 40px; max-width: 600px; margin: 0 auto; }
-        body.focus-mode .settings-content { background: #2a2a2a; }
-        .settings-group { margin-bottom: 30px; padding-bottom: 30px; border-bottom: 1px solid #e8e8f0; }
-        body.focus-mode .settings-group { border-bottom-color: #444; }
-        .settings-group h3 { font-size: 1.2em; margin-bottom: 15px; color: #333; }
-        body.focus-mode .settings-group h3 { color: #ddd; }
-        .toggle-switch { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .switch { position: relative; width: 50px; height: 28px; }
-        .switch input { display: none; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: 0.4s; border-radius: 28px; }
-        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(22px); }
-        .stat { background: rgba(102,126,234,0.1); padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        body.focus-mode .stat { background: rgba(102,126,234,0.2); color: #ddd; }
-        @media (max-width: 768px) {
-            .auth-box { padding: 30px 20px; }
-            .dashboard-header h1 { font-size: 1.8em; }
-            .months-grid { grid-template-columns: 1fr; }
-            .header-content { flex-direction: column; }
-            .nav-item { font-size: 0.75em; padding: 10px; }
-        }
+        .nav-item.active { color: var(--primary); border-top-color: var(--primary); }
+        @media (max-width: 768px) { .dashboard-header h1 { font-size: 1.8em; } .months-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-
-      <div class="auth-container" id="authScreen">
-        <div class="auth-box">
-            <h2 id="authTitle">Register</h2>
+<div id="authScreen" class="auth-container">
+    <div class="auth-box">
+        <h2 id="authTitle">Register</h2>
+        <form onsubmit="handleAuth(event)">
             <div class="form-group">
                 <label>Your Name</label>
-                <input type="text" id="nameInput" placeholder="Enter your name">
+                <input type="text" id="nameInput" placeholder="Enter your name" required>
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" id="passwordInput" placeholder="Create a password">
+                <input type="password" id="passwordInput" placeholder="Create a password" required>
             </div>
-            <div class="auth-buttons">
-                <button class="btn btn-primary" id="submitAuthBtn">Register</button>
-                <button class="btn btn-secondary hidden" id="toggleAuthBtn">Login</button>
-            </div>
-            <div id="existingUsers" style="margin-top: 20px; display: none;">
-                <p style="text-align: center; margin-bottom: 10px; font-size: 0.9em; color: #666;">Or continue as:</p>
-                <div id="usersList"></div>
-            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+</div>
+
+<div id="appScreen" class="app-container">
+    <div class="app-header">
+        <div class="header-content">
+            <div class="logo">🐍 SnakeEye Lab</div>
+            <button class="btn btn-primary" onclick="logout()" style="width: 120px; margin: 0;">Logout</button>
         </div>
     </div>
-
-    <div class="app-container" id="appScreen">
-        <div class="app-header">
-            <div class="header-content">
-                <div class="logo">🐍 SnakeEye Lab</div>
-                <div class="user-info">
-                    <span id="currentUser"></span>
-                    <button class="btn btn-secondary" style="width: 100px; padding: 8px; font-size: 0.85em;" onclick="logout()">Logout</button>
-                </div>
-            </div>
+    <div class="main-content">
+        <div class="dashboard-header">
+            <h1>Your 12-Month Journey</h1>
+            <p id="currentUser"></p>
         </div>
-
-        <div class="main-content">
-            <div class="page-section active" id="dashboardPage">
-                <div class="dashboard-header">
-                    <h1>SnakeEye Lab 🐍</h1>
-                    <p>12-Month Skill Evolution (Dec 2025 - Dec 2026)</p>
-                </div>
-                <div class="months-grid" id="monthsGrid"></div>
-            </div>
-
-            <div class="page-section" id="progressPage">
-                <div style="background: var(--bg-light); border-radius: 16px; padding: 40px; max-width: 600px; margin: 0 auto;">
-                    <h2 style="margin-bottom: 30px; color: #1a1a1a;">📊 Progress Radar</h2>
-                    <div class="stat">
-                        <p><strong>Current Month:</strong> December 2025</p>
-                        <p><strong>Theme:</strong> Zero-API Web Apps</p>
-                        <p><strong>Completion:</strong> In Progress ✓</p>
-                    </div>
-                    <div class="stat">
-                        <p><strong>Skills Unlocked:</strong> DOM Manipulation, Local Storage, State Management, Responsive Design</p>
-                    </div>
-                    <div class="stat">
-                        <p><strong>Total Months:</strong> 13 months remaining to build mastery</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="page-section" id="settingsPage">
-                <div class="settings-content">
-                    <h2 style="color: #1a1a1a;">⚙️ Settings</h2>
-                    <div class="settings-group">
-                        <h3>🌓 Theme</h3>
-                        <div class="toggle-switch">
-                            <label>Focus Mode (Dark & Distraction-Free)</label>
-                            <div class="switch">
-                                <input type="checkbox" id="focusToggle" onchange="toggleFocusMode()">
-                                <span class="slider"></span>
-                            </div>
-                        </div>
-                        <p style="font-size: 0.9em; color: #666; margin-top: 10px;">Dark theme + Clean layout for deep work</p>
-                    </div>
-                    <div class="settings-group">
-                        <h3>👤 Account</h3>
-                        <div class="stat">
-                            <p><strong>Username:</strong> <span id="settingsUserName" style="color: var(--primary); font-weight: 700;"></span></p>
-                            <p><strong>Member Since:</strong> <span id="memberSince"></span></p>
-                        </div>
-                        <button class="btn btn-secondary" style="width: 100%; margin-top: 15px;" onclick="logout()">Logout & Switch Account</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bottom-nav">
-            <div class="nav-item active" onclick="showPage('dashboardPage', 0)">🏠 Home</div>
-            <div class="nav-item" onclick="showPage('progressPage', 1)">📊 Progress</div>
-            <div class="nav-item" onclick="showPage('settingsPage', 2)">⚙️ Settings</div>
-        </div>
+        <div class="months-grid" id="monthsGrid"></div>
     </div>
+</div>
 
-      <script>
-        const MONTHS = [
-			{ id: "2025-12", name: "December 2025", theme: "Zero-API Web Apps", status: "active", projects: [{name: "Smart Notes", url: "./2025-12-zero-api-web/smart-notes-app/index.html"}, {name: "Task Manager", url: "./2025-12-zero-api-web/task-manager/index.html"}, {name: "HeartSync", url: "./2025-12-zero-api-web/heart-sync/index.html"}] }            , { id: "2026-01", name: "January 2026", theme: "Security & Tools", status: "locked", projects: [] },
-            { id: "2026-02", name: "February 2026", theme: "AI/ML Local Experiments", status: "locked", projects: [] },
-            { id: "2026-03", name: "March 2026", theme: "Creative Coding & 3D", status: "locked", projects: [] },
-            { id: "2026-04", name: "April 2026", theme: "Data Dashboards", status: "locked", projects: [] },
-            { id: "2026-05", name: "May 2026", theme: "Dev Productivity Tools", status: "locked", projects: [] },
-            { id: "2026-06", name: "June 2026", theme: "Testing & Quality", status: "locked", projects: [] },
-            { id: "2026-07", name: "July 2026", theme: "Performance & Optimization", status: "locked", projects: [] },
-            { id: "2026-08", name: "August 2026", theme: "Backend Mastery", status: "locked", projects: [] },
-            { id: "2026-09", name: "September 2026", theme: "Distributed & Scalable", status: "locked", projects: [] },
-            { id: "2026-10", name: "October 2026", theme: "Open Source & Docs", status: "locked", projects: [] },
-            { id: "2026-11", name: "November 2026", theme: "Real-World Clone", status: "locked", projects: [] },
-            { id: "2026-12", name: "December 2026", theme: "Portfolio & Polish", status: "locked", projects: [] }
-        ];
+<script>
+const MONTHS = [
+    { id: '2025-12', name: 'December 2025', theme: 'Zero-API Web Apps', status: 'active', projects: [{name: 'Smart Notes', url: './2025-12-zero-api-web/smart-notes-app/'}, {name: 'Task Manager', url: './2025-12-zero-api-web/task-manager/'}, {name: 'HeartSync', url: './2025-12-zero-api-web/heart-sync/'}, {name: 'Music Mood', url: './2025-12-zero-api-web/music-mood/'}]},
+    { id: '2026-01', name: 'January 2026', theme: 'Security & Tools', status: 'locked', projects: []},
+    { id: '2026-02', name: 'February 2026', theme: 'AI/ML Local', status: 'locked', projects: []},
+    { id: '2026-03', name: 'March 2026', theme: 'Creative Coding 3D', status: 'locked', projects: []},
+    { id: '2026-04', name: 'April 2026', theme: 'Data Dashboards', status: 'locked', projects: []},
+    { id: '2026-05', name: 'May 2026', theme: 'Dev Tools', status: 'locked', projects: []},
+    { id: '2026-06', name: 'June 2026', theme: 'Testing & Quality', status: 'locked', projects: []},
+    { id: '2026-07', name: 'July 2026', theme: 'Performance', status: 'locked', projects: []},
+    { id: '2026-08', name: 'August 2026', theme: 'Backend Mastery', status: 'locked', projects: []},
+    { id: '2026-09', name: 'September 2026', theme: 'Distributed', status: 'locked', projects: []},
+    { id: '2026-10', name: 'October 2026', theme: 'Open Source', status: 'locked', projects: []},
+    { id: '2026-11', name: 'November 2026', theme: 'Real-World Clone', status: 'locked', projects: []},
+    { id: '2026-12', name: 'December 2026', theme: 'Portfolio', status: 'locked', projects: []}
+];
 
-        let authMode = 'register';
-        let currentUser = null;
+let currentUser = null;
 
-		  	function loadUsers() {
-		// Load users from localStorage
-		const saved = localStorage.getItem('snakeeye_users');
-		if (!saved) return;
-		// Users exist, can show quick login buttons
-	}
+function handleAuth(event) {
+    event.preventDefault();
+    const name = document.getElementById('nameInput').value.trim();
+    const password = document.getElementById('passwordInput').value.trim();
+    
+    if (!name || !password) { alert('Please fill all fields'); return; }
+    
+    const users = JSON.parse(localStorage.getItem('snakeeye_users') || '[]');
+    const existingUser = users.find(u => u.name.toLowerCase() === name.toLowerCase());
+    
+    if (!existingUser) {
+        users.push({ name, passwordHash: btoa(password) });
+        localStorage.setItem('snakeeye_users', JSON.stringify(users));
+    } else if (btoa(password) !== existingUser.passwordHash) {
+        alert('Invalid password!'); return;
+    }
+    
+    currentUser = name;
+    localStorage.setItem('snakeeye_currentUser', name);
+    loginSuccess();
+}
 
-        function initApp() {
-            loadUsers();
-            renderMonths();
-            setupEventListeners();
-        }
+function loginSuccess() {
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('appScreen').classList.add('active');
+    document.getElementById('currentUser').textContent = '👤 ' + currentUser;
+    renderMonths();
+}
 
-        function loadUsers() {
-            const saved = localStorage.getItem('snakeeye_users');
-            if (saved) {
-                const users = JSON.parse(saved);
-                if (users.length > 0) {
-                    authMode = 'login';
-                    showExistingUsers(users);
+function renderMonths() {
+    const grid = document.getElementById('monthsGrid');
+    grid.innerHTML = '';
+    MONTHS.forEach(month => {
+        const card = document.createElement('div');
+        card.className = 'month-card ' + month.status;
+        const projectsHtml = month.projects.length > 0 ? `<div class="project-list">📦 ${month.projects.map(p => p.name).join(', ')}</div>` : '';
+        card.innerHTML = `<div class="status-badge ${month.status}">${month.status.toUpperCase()}</div><h3>${month.name}</h3><p>${month.theme}</p>${projectsHtml}<div class="lock-icon">🔒</div>`;
+        
+        if (month.status === 'active') {
+            card.onclick = () => {
+                if (month.id === '2025-12') {
+                    window.location.href = 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2025-12-zero-api-web';
                 }
-            }
+            };
         }
+        grid.appendChild(card);
+    });
+}
 
-        function showExistingUsers(users) {
-            const list = document.getElementById('usersList');
-            list.innerHTML = '';
-            users.forEach(user => {
-                const btn = document.createElement('button');
-                btn.className = 'user-quick-btn';
-                btn.textContent = `👤 ${user.name}`;
-                btn.onclick = () => switchToLogin(user.name);
-                list.appendChild(btn);
-            });
-            document.getElementById('existingUsers').style.display = 'block';
-            document.getElementById('authTitle').textContent = 'Welcome Back';
-            document.getElementById('toggleAuthBtn').classList.remove('hidden');
-        }
+function logout() {
+    localStorage.removeItem('snakeeye_currentUser');
+    location.reload();
+}
 
-        function switchToLogin(userName) {
-            authMode = 'login';
-            document.getElementById('nameInput').value = userName;
-            document.getElementById('passwordInput').focus();
-            document.getElementById('nameInput').disabled = true;
-            document.getElementById('authTitle').textContent = 'Login';
-            document.getElementById('submitAuthBtn').textContent = 'Login';
-        }
-
-        function setupEventListeners() {
-            document.getElementById('submitAuthBtn').onclick = handleAuth;
-            document.getElementById('passwordInput').onkeypress = (e) => e.key === 'Enter' && handleAuth();
-            document.getElementById('nameInput').onkeypress = (e) => e.key === 'Enter' && document.getElementById('passwordInput').focus();
-            document.getElementById('toggleAuthBtn').onclick = toggleAuthMode;
-            const monthCards = document.querySelectorAll('.month-card:not(.locked)');
-            const branchNames = { 
-    '2025-12': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2025-12-zero-api-web',                '2026-01': '2026-01-security', 
-                '2026-01': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-01-security',
-                '2026-02': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-02-ai-ml',
-                '2026-03': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-03-creative-3d',
-                '2026-04': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-04-data-dashboards',
-                '2026-05': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-05-dev-tools',
-                '2026-06': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-06-testing',
-                '2026-07': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-07-performance',
-                '2026-08': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-08-backend',
-                '2026-09': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-09-distributed',
-                '2026-10': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-10-opensource',
-                '2026-11': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-11-real-world',
-            '2026-12': 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2026-12-portfolio'
-
-            monthCards.forEach(card => {
-                const monthName = card.querySelector('h3')?.textContent?.trim() || '';
-                const month = MONTHS.find(m => m.name === monthName); // Use global MONTHS
-                
-                if (month) {
-                    card.onclick = () => {
-                        const branchName = branchNames[month.id];
-                        if (branchName) {
-                            window.open(`https://github.com/SnakeEye-sudo/snakeeye-lab/tree/${branchName}`, '_blank');
-                        }
-                    };
-                }
-            });
-        }
-
-        function toggleAuthMode() {
-            if (authMode === 'login') {
-                authMode = 'register';
-                document.getElementById('nameInput').disabled = false;
-                document.getElementById('nameInput').value = '';
-                document.getElementById('authTitle').textContent = 'Register';
-                document.getElementById('submitAuthBtn').textContent = 'Register';
-                document.getElementById('toggleAuthBtn').textContent = 'Login';
-            } else {
-                authMode = 'login';
-                document.getElementById('nameInput').disabled = true;
-                document.getElementById('authTitle').textContent = 'Login';
-                document.getElementById('submitAuthBtn').textContent = 'Login';
-                document.getElementById('toggleAuthBtn').textContent = 'Register';
-            }
-        }
-
-        function handleAuth() {
-            const name = document.getElementById('nameInput').value.trim();
-            const password = document.getElementById('passwordInput').value.trim();
-
-            if (!name || !password) {
-                alert('Please fill all fields');
-                return;
-            }
-
-            const users = JSON.parse(localStorage.getItem('snakeeye_users') || '[]');
-
-            if (authMode === 'register') {
-                if (users.some(u => u.name.toLowerCase() === name.toLowerCase())) {
-                    alert('User already exists!');
-                    return;
-                }
-                users.push({
-                    name,
-                    passwordHash: btoa(password),
-                    createdAt: new Date().toLocaleDateString('en-IN')
-                });
-            } else {
-                const user = users.find(u => u.name.toLowerCase() === name.toLowerCase());
-                if (!user || btoa(password) !== user.passwordHash) {
-                    alert('Invalid credentials!');
-                    return;
-                }
-            }
-
-            localStorage.setItem('snakeeye_users', JSON.stringify(users));
-            currentUser = name;
-            localStorage.setItem('snakeeye_currentUser', name);
-            loginSuccess();
-        }
-
-        function loginSuccess() {
-            document.getElementById('authScreen').classList.add('hidden');
-            document.getElementById('appScreen').classList.add('active');
-            document.getElementById('currentUser').textContent = '👤 ' + currentUser;
-            document.getElementById('settingsUserName').textContent = currentUser;
-            const users = JSON.parse(localStorage.getItem('snakeeye_users'));
-            const user = users.find(u => u.name === currentUser);
-            document.getElementById('memberSince').textContent = user.createdAt;
-        }
-
-        function logout() {
-            localStorage.removeItem('snakeeye_currentUser');
-            location.reload();
-        }
-
-        function renderMonths() {
-            const grid = document.getElementById('monthsGrid');
-            grid.innerHTML = '';
-            MONTHS.forEach(month => {
-                const card = document.createElement('div');
-                card.className = 'month-card ' + month.status;
-                card.innerHTML = `
-                    <div class="status-badge ${month.status}">${month.status.toUpperCase()}</div>
-                    <h3>${month.name}</h3>
-                    <p>${month.theme}</p>
-                    ${month.projects && month.projects.length > 0 ? `<p style="font-size: 0.9em; color: var(--success); font-weight: 500;">📦 Projects: ${month.projects.map(p => p.name).join(', ')}</p>` : ''}
-                    <div class="lock-icon">🔒<p>Unlock ${month.name}</p></div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function showPage(pageId, navIndex) {
-            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            document.querySelectorAll('.nav-item')[navIndex].classList.add('active');
-        }
-
-        function toggleFocusMode() {
-            document.body.classList.toggle('focus-mode');
-            localStorage.setItem('snakeeye_focusMode', document.body.classList.contains('focus-mode'));
-        }
-
-        window.onload = () => {
-            const saved = localStorage.getItem('snakeeye_currentUser');
-            if (saved) {
-                currentUser = saved;
-                loginSuccess();
-            }
-            if (localStorage.getItem('snakeeye_focusMode') === 'true') {
-                document.body.classList.add('focus-mode');
-                document.getElementById('focusToggle').checked = true;
-            }
-            initApp();
-        };
-    </script>
+window.onload = () => {
+    const saved = localStorage.getItem('snakeeye_currentUser');
+    if (saved) {
+        currentUser = saved;
+        loginSuccess();
+    }
+};
+</script>
 </body>
 </html>
