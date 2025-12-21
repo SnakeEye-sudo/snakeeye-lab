@@ -9,10 +9,11 @@
         :root { --primary: #667eea; --secondary: #764ba2; --success: #4caf50; --bg-dark: #0f1419; --bg-light: #ffffff; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); min-height: 100vh; transition: all 0.3s; }
         body.focus-mode { background: var(--bg-dark); color: #ddd; }
+        .hidden { display: none !important; }
         .auth-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         .auth-box { background: var(--bg-light); border-radius: 16px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 400px; width: 100%; animation: slideUp 0.5s ease-out; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .auth-box h2 { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; font-size: 2em; text-align: center; }
+        .auth-box h2 { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px; font-size: 2em; text-align: center; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
         .form-group input { width: 100%; padding: 12px 15px; border: 2px solid #e8e8f0; border-radius: 8px; font-size: 1em; transition: all 0.3s; }
@@ -20,7 +21,6 @@
         .btn { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; font-size: 1em; transition: all 0.3s; }
         .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; margin-top: 20px; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102,126,234,0.4); }
-        .hidden { display: none !important; }
         .app-container { display: none; min-height: 100vh; padding-bottom: 80px; background: linear-gradient(135deg, #f5f7ff 0%, #f9f5ff 100%); }
         .app-container.active { display: block; }
         .app-header { background: var(--bg-light); padding: 20px 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
@@ -41,11 +41,32 @@
         .project-list { font-size: 0.9em; color: #555; }
         .lock-icon { display: none; text-align: center; font-size: 3em; margin: 20px 0; }
         .month-card.locked .lock-icon { display: block; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-light); border-top: 1px solid #e8e8f0; display: flex; justify-content: center; z-index: 200; }
-        .nav-item { flex: 1; padding: 12px; text-align: center; cursor: pointer; color: #666; font-weight: 600; border-top: 3px solid transparent; transition: all 0.3s; }
-        .nav-item:hover { background: rgba(102,126,234,0.05); color: var(--primary); }
-        .nav-item.active { color: var(--primary); border-top-color: var(--primary); }
-        @media (max-width: 768px) { .dashboard-header h1 { font-size: 1.8em; } .months-grid { grid-template-columns: 1fr; } }
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; animation: fadeIn 0.3s ease-out; }
+        .modal.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-content { background: white; border-radius: 16px; max-width: 900px; width: 90%; max-height: 90vh; overflow-y: auto; margin: auto; animation: slideInUp 0.3s ease-out; }
+        @keyframes slideInUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 30px 25px; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h2 { font-size: 2em; }
+        .close-btn { background: none; border: none; color: white; font-size: 2em; cursor: pointer; }
+        .close-btn:hover { opacity: 0.8; }
+        .modal-body { padding: 30px 25px; }
+        .projects-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .project-card { background: #f9f9f9; border-radius: 12px; padding: 20px; border: 2px solid #e8e8f0; transition: all 0.3s; }
+        .project-card:hover { border-color: #667eea; box-shadow: 0 10px 30px rgba(102,126,234,0.2); transform: translateY(-5px); }
+        .project-emoji { font-size: 2.5em; margin-bottom: 10px; }
+        .project-name { font-size: 1.3em; font-weight: 700; color: #333; margin-bottom: 8px; }
+        .project-desc { color: #666; font-size: 0.95em; margin-bottom: 15px; line-height: 1.5; }
+        .project-tech { font-size: 0.85em; color: #667eea; font-weight: 600; margin-bottom: 12px; }
+        .project-link { display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9em; font-weight: 600; transition: all 0.3s; }
+        .project-link:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+        .month-info { background: #f0f0f8; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+        .month-info h3 { color: #333; margin-bottom: 8px; }
+        .month-info p { color: #666; }
+
+        @media (max-width: 768px) { .dashboard-header h1 { font-size: 1.8em; } .months-grid { grid-template-columns: 1fr; } .modal-content { width: 95%; } }
     </style>
 </head>
 <body>
@@ -82,9 +103,32 @@
     </div>
 </div>
 
+<!-- Project Details Modal -->
+<div id="projectModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">December 2025</h2>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
 <script>
 const MONTHS = [
-    { id: '2025-12', name: 'December 2025', theme: 'Zero-API Web Apps', status: 'active', projects: [{name: 'Smart Notes', url: './2025-12-zero-api-web/smart-notes-app/'}, {name: 'Task Manager', url: './2025-12-zero-api-web/task-manager/'}, {name: 'HeartSync', url: './2025-12-zero-api-web/heart-sync/'}, {name: 'Music Mood', url: './2025-12-zero-api-web/music-mood/'}]},
+    { 
+        id: '2025-12', 
+        name: 'December 2025', 
+        theme: 'Zero-API Web Apps', 
+        status: 'active', 
+        description: 'Pure JavaScript, Local Storage, Offline-First',
+        projects: [
+            { name: 'Smart Notes', emoji: '📝', desc: 'Note-taking app with rich formatting, local storage persistence, and markdown support', tech: 'Vanilla JS, LocalStorage, HTML5', url: './2025-12-zero-api-web/smart-notes-app/index.html' },
+            { name: 'Task Manager', emoji: '✅', desc: 'Todo list with categories, priorities, due dates, and persistent storage', tech: 'Vanilla JS, LocalStorage, CSS Grid', url: './2025-12-zero-api-web/task-manager/index.html' },
+            { name: 'HeartSync', emoji: '💗', desc: 'UI state management with interactive animations and user preference sync', tech: 'Vanilla JS, LocalStorage, Animations', url: './2025-12-zero-api-web/heart-sync/index.html' },
+            { name: 'Music Mood', emoji: '🎵', desc: 'Music player with mood tracking, playlists, and audio visualization', tech: 'HTML5 Audio, LocalStorage, Canvas', url: './2025-12-zero-api-web/music-mood/index.html' }
+        ]
+    },
     { id: '2026-01', name: 'January 2026', theme: 'Security & Tools', status: 'locked', projects: []},
     { id: '2026-02', name: 'February 2026', theme: 'AI/ML Local', status: 'locked', projects: []},
     { id: '2026-03', name: 'March 2026', theme: 'Creative Coding 3D', status: 'locked', projects: []},
@@ -105,63 +149,8 @@ function handleAuth(event) {
     event.preventDefault();
     const name = document.getElementById('nameInput').value.trim();
     const password = document.getElementById('passwordInput').value.trim();
-    
     if (!name || !password) { alert('Please fill all fields'); return; }
-    
     const users = JSON.parse(localStorage.getItem('snakeeye_users') || '[]');
     const existingUser = users.find(u => u.name.toLowerCase() === name.toLowerCase());
-    
-    if (!existingUser) {
-        users.push({ name, passwordHash: btoa(password) });
-        localStorage.setItem('snakeeye_users', JSON.stringify(users));
-    } else if (btoa(password) !== existingUser.passwordHash) {
-        alert('Invalid password!'); return;
-    }
-    
-    currentUser = name;
-    localStorage.setItem('snakeeye_currentUser', name);
-    loginSuccess();
-}
-
-function loginSuccess() {
-    document.getElementById('authScreen').classList.add('hidden');
-    document.getElementById('appScreen').classList.add('active');
-    document.getElementById('currentUser').textContent = '👤 ' + currentUser;
-    renderMonths();
-}
-
-function renderMonths() {
-    const grid = document.getElementById('monthsGrid');
-    grid.innerHTML = '';
-    MONTHS.forEach(month => {
-        const card = document.createElement('div');
-        card.className = 'month-card ' + month.status;
-        const projectsHtml = month.projects.length > 0 ? `<div class="project-list">📦 ${month.projects.map(p => p.name).join(', ')}</div>` : '';
-        card.innerHTML = `<div class="status-badge ${month.status}">${month.status.toUpperCase()}</div><h3>${month.name}</h3><p>${month.theme}</p>${projectsHtml}<div class="lock-icon">🔒</div>`;
-        
-        if (month.status === 'active') {
-            card.onclick = () => {
-                if (month.id === '2025-12') {
-                    window.location.href = 'https://github.com/SnakeEye-sudo/snakeeye-lab/tree/main/2025-12-zero-api-web';
-                }
-            };
-        }
-        grid.appendChild(card);
-    });
-}
-
-function logout() {
-    localStorage.removeItem('snakeeye_currentUser');
-    location.reload();
-}
-
-window.onload = () => {
-    const saved = localStorage.getItem('snakeeye_currentUser');
-    if (saved) {
-        currentUser = saved;
-        loginSuccess();
-    }
-};
-</script>
-</body>
-</html>
+    if (!exist
+User) { users.push({ name, passwordHash: btoa(password) }); localStorage.setItem('snakeeye_users', JSON.stringify(users)); } else if (btoa(password) !== existingUser.passwordHash) { alert('Invalid password!'); return; } currentUser = name; localStorage.setItem('snakeeye_currentUser', name); loginSuccess(); } function loginSuccess() { document.getElementById('authScreen').classList.add('hidden'); document.getElementById('appScreen').classList.add('active'); document.getElementById('currentUser').textContent = '👤 ' + currentUser; renderMonths(); } function renderMonths() { const grid = document.getElementById('monthsGrid'); grid.innerHTML = ''; MONTHS.forEach(month => { const card = document.createElement('div'); card.className = 'month-card ' + month.status; const projectsHtml = month.projects.length > 0 ? `<div class="project-list">📦 ${month.projects.map(p => p.name).join(', ')}</div>` : ''; card.innerHTML = `<div class="status-badge ${month.status}">${month.status.toUpperCase()}</div><h3>${month.name}</h3><p>${month.theme}</p>${projectsHtml}<div class="lock-icon">🔒</div>`; if (month.status === 'active' && month.projects.length > 0) { card.onclick = () => showProjectModal(month); } grid.appendChild(card); }); } function showProjectModal(month) { const modal = document.getElementById('projectModal'); const modalBody = document.getElementById('modalBody'); const modalTitle = document.getElementById('modalTitle'); modalTitle.textContent = month.name + ' - ' + month.theme; let html = `<div class="month-info"><h3>Theme: ${month.theme}</h3><p>${month.description}</p></div><div class="projects-container">`; month.projects.forEach(proj => { html += `<div class="project-card"><div class="project-emoji">${proj.emoji}</div><div class="project-name">${proj.name}</div><div class="project-desc">${proj.desc}</div><div class="project-tech">Tech: ${proj.tech}</div><a href="${proj.url}" class="project-link" target="_blank">View Project →</a></div>`; }); html += '</div>'; modalBody.innerHTML = html; modal.classList.add('active'); } function closeModal() { document.getElementById('projectModal').classList.remove('active'); } function logout() { localStorage.removeItem('snakeeye_currentUser'); location.reload(); } window.onload = () => { const saved = localStorage.getItem('snakeeye_currentUser'); if (saved) { currentUser = saved; loginSuccess(); } }; </script> </body> </html>
