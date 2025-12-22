@@ -1,156 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SnakeEye Lab - Dashboard</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root { --primary: #667eea; --secondary: #764ba2; --success: #4caf50; --bg-dark: #0f1419; --bg-light: #ffffff; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); min-height: 100vh; transition: all 0.3s; }
-        body.focus-mode { background: var(--bg-dark); color: #ddd; }
-        .hidden { display: none !important; }
-        .auth-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .auth-box { background: var(--bg-light); border-radius: 16px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 400px; width: 100%; animation: slideUp 0.5s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .auth-box h2 { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px; font-size: 2em; text-align: center; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
-        .form-group input { width: 100%; padding: 12px 15px; border: 2px solid #e8e8f0; border-radius: 8px; font-size: 1em; transition: all 0.3s; }
-        .form-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
-        .btn { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; font-size: 1em; transition: all 0.3s; }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; margin-top: 20px; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102,126,234,0.4); }
-        .app-container { display: none; min-height: 100vh; padding-bottom: 80px; background: linear-gradient(135deg, #f5f7ff 0%, #f9f5ff 100%); }
-        .app-container.active { display: block; }
-        .app-header { background: var(--bg-light); padding: 20px 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
-        .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.8em; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .main-content { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-        .dashboard-header { text-align: center; margin-bottom: 50px; }
-        .dashboard-header h1 { font-size: 2.5em; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px; }
-        .months-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .month-card { background: var(--bg-light); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid transparent; cursor: pointer; min-height: 200px; }
-        .month-card:hover:not(.locked) { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(102,126,234,0.3); border-color: var(--primary); }
-        .month-card.locked { opacity: 0.6; cursor: not-allowed; }
-        .month-card h3 { font-size: 1.4em; margin-bottom: 8px; color: #1a1a1a; }
-        .month-card p { color: #666; margin-bottom: 15px; font-size: 0.95em; }
-        .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 0.75em; font-weight: 700; margin-bottom: 15px; }
-        .status-badge.active { background: rgba(76,175,80,0.1); color: var(--success); }
-        .status-badge.locked { background: rgba(200,200,200,0.1); color: #999; }
-        .project-list { font-size: 0.9em; color: #555; }
-        .lock-icon { display: none; text-align: center; font-size: 3em; margin: 20px 0; }
-        .month-card.locked .lock-icon { display: block; }
-
-        /* Modal Styles */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; animation: fadeIn 0.3s ease-out; }
-        .modal.active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .modal-content { background: white; border-radius: 16px; max-width: 900px; width: 90%; max-height: 90vh; overflow-y: auto; margin: auto; animation: slideInUp 0.3s ease-out; }
-        @keyframes slideInUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .modal-header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 30px 25px; display: flex; justify-content: space-between; align-items: center; }
-        .modal-header h2 { font-size: 2em; }
-        .close-btn { background: none; border: none; color: white; font-size: 2em; cursor: pointer; }
-        .close-btn:hover { opacity: 0.8; }
-        .modal-body { padding: 30px 25px; }
-        .projects-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .project-card { background: #f9f9f9; border-radius: 12px; padding: 20px; border: 2px solid #e8e8f0; transition: all 0.3s; }
-        .project-card:hover { border-color: #667eea; box-shadow: 0 10px 30px rgba(102,126,234,0.2); transform: translateY(-5px); }
-        .project-emoji { font-size: 2.5em; margin-bottom: 10px; }
-        .project-name { font-size: 1.3em; font-weight: 700; color: #333; margin-bottom: 8px; }
-        .project-desc { color: #666; font-size: 0.95em; margin-bottom: 15px; line-height: 1.5; }
-        .project-tech { font-size: 0.85em; color: #667eea; font-weight: 600; margin-bottom: 12px; }
-        .project-link { display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9em; font-weight: 600; transition: all 0.3s; }
-        .project-link:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
-        .month-info { background: #f0f0f8; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
-        .month-info h3 { color: #333; margin-bottom: 8px; }
-        .month-info p { color: #666; }
-
-        @media (max-width: 768px) { .dashboard-header h1 { font-size: 1.8em; } .months-grid { grid-template-columns: 1fr; } .modal-content { width: 95%; } }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SnakeEye Lab - Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --primary: #667eea; --secondary: #764ba2; --success: #4caf50; --bg-dark: #0f1419; --bg-light: #ffffff; }
+    body { font-family: 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); min-height: 100vh; transition: all 0.3s; }
+    body.focus-mode { background: var(--bg-dark); color: #ddd; }
+    .hidden { display: none !important; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .auth-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+    .auth-box { background: var(--bg-light); border-radius: 16px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 400px; width: 100%; animation: slideUp 0.5s ease-out; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .auth-box h2 { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px; font-size: 2em; text-align: center; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
+    .form-group input { width: 100%; padding: 12px 15px; border: 2px solid #e8e8f0; border-radius: 8px; font-size: 1em; transition: all 0.3s; }
+    .form-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+    .btn { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; font-size: 1em; transition: all 0.3s; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; margin-top: 20px; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102,126,234,0.4); }
+    .app-container { min-height: 100vh; padding-bottom: 80px; background: linear-gradient(135deg, #f5f7ff 0%, #f9f5ff 100%); }
+    .app-header { background: var(--bg-light); padding: 20px 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
+    .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.8em; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav-buttons { display: flex; gap: 10px; }
+    .nav-btn { background: var(--primary); color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+    .nav-btn.active { background: var(--secondary); }
+    .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.3); }
+    .main-content { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+    .dashboard-header { text-align: center; margin-bottom: 50px; }
+    .dashboard-header h1 { font-size: 2.5em; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px; }
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .project-card { background: var(--bg-light); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid transparent; }
+    .project-card:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(102,126,234,0.3); border-color: var(--primary); }
+    .project-emoji { font-size: 3em; margin-bottom: 10px; }
+    .project-name { font-size: 1.3em; font-weight: 700; color: #333; margin-bottom: 8px; }
+    .project-desc { color: #666; font-size: 0.95em; margin-bottom: 15px; line-height: 1.5; }
+    .project-tech { font-size: 0.85em; color: var(--primary); font-weight: 600; margin-bottom: 12px; }
+    .project-link { display: inline-block; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9em; font-weight: 600; transition: all 0.3s; }
+    .project-link:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+    .month-header { background: #f0f0f8; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+    .month-header h2 { color: var(--primary); margin-bottom: 8px; }
+    .month-header p { color: #666; }
+    @media (max-width: 768px) { .dashboard-header h1 { font-size: 1.8em; } .projects-grid { grid-template-columns: 1fr; } .nav-buttons { flex-wrap: wrap; } }
+  </style>
 </head>
 <body>
-<div id="authScreen" class="auth-container">
+<div id="authPage" class="page active">
+  <div class="auth-container">
     <div class="auth-box">
-        <h2 id="authTitle">Register</h2>
-        <form onsubmit="handleAuth(event)">
-            <div class="form-group">
-                <label>Your Name</label>
-                <input type="text" id="nameInput" placeholder="Enter your name" required>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="passwordInput" placeholder="Create a password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
+      <h2>Register / Login</h2>
+      <form onsubmit="handleAuth(event)">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="nameInput" placeholder="Enter your name" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="passwordInput" placeholder="Create a password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Register / Login</button>
+      </form>
     </div>
+  </div>
 </div>
 
-<div id="appScreen" class="app-container">
-    <div class="app-header">
-        <div class="header-content">
-            <div class="logo">🐍 SnakeEye Lab</div>
-            <button class="btn btn-primary" onclick="logout()" style="width: 120px; margin: 0;">Logout</button>
-        </div>
+<div id="decemberPage" class="page">
+  <div class="app-header">
+    <div class="header-content">
+      <div class="logo">🐍 SnakeEye Lab</div>
+      <div class="nav-buttons">
+        <button class="nav-btn" onclick="logout()">Logout</button>
+      </div>
     </div>
-    <div class="main-content">
-        <div class="dashboard-header">
-            <h1>Your 12-Month Journey</h1>
-            <p id="currentUser"></p>
-        </div>
-        <div class="months-grid" id="monthsGrid"></div>
+  </div>
+  <div class="main-content">
+    <div class="dashboard-header">
+      <h1>December 2025 Projects</h1>
+      <p id="currentUser"></p>
     </div>
-</div>
-
-<!-- Project Details Modal -->
-<div id="projectModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 id="modalTitle">December 2025</h2>
-            <button class="close-btn" onclick="closeModal()">&times;</button>
-        </div>
-        <div class="modal-body" id="modalBody"></div>
+    <div class="month-header">
+      <h2>🎯 Theme: Zero-API Web Apps</h2>
+      <p>Pure JavaScript, Local Storage, Offline-First - Building without external APIs, mastering vanilla JS state management and UX design</p>
     </div>
+    <div class="projects-grid" id="projectsGrid"></div>
+  </div>
 </div>
 
 <script>
-const MONTHS = [
-    { 
-        id: '2025-12', 
-        name: 'December 2025', 
-        theme: 'Zero-API Web Apps', 
-        status: 'active', 
-        description: 'Pure JavaScript, Local Storage, Offline-First',
-        projects: [
-            { name: 'Smart Notes', emoji: '📝', desc: 'Note-taking app with rich formatting, local storage persistence, and markdown support', tech: 'Vanilla JS, LocalStorage, HTML5', url: './2025-12-zero-api-web/smart-notes-app/index.html' },
-            { name: 'Task Manager', emoji: '✅', desc: 'Todo list with categories, priorities, due dates, and persistent storage', tech: 'Vanilla JS, LocalStorage, CSS Grid', url: './2025-12-zero-api-web/task-manager/index.html' },
-            { name: 'HeartSync', emoji: '💗', desc: 'UI state management with interactive animations and user preference sync', tech: 'Vanilla JS, LocalStorage, Animations', url: './2025-12-zero-api-web/heart-sync/index.html' },
-            { name: 'Music Mood', emoji: '🎵', desc: 'Music player with mood tracking, playlists, and audio visualization', tech: 'HTML5 Audio, LocalStorage, Canvas', url: './2025-12-zero-api-web/music-mood/index.html' }
-        ]
-    },
-    { id: '2026-01', name: 'January 2026', theme: 'Security & Tools', status: 'locked', projects: []},
-    { id: '2026-02', name: 'February 2026', theme: 'AI/ML Local', status: 'locked', projects: []},
-    { id: '2026-03', name: 'March 2026', theme: 'Creative Coding 3D', status: 'locked', projects: []},
-    { id: '2026-04', name: 'April 2026', theme: 'Data Dashboards', status: 'locked', projects: []},
-    { id: '2026-05', name: 'May 2026', theme: 'Dev Tools', status: 'locked', projects: []},
-    { id: '2026-06', name: 'June 2026', theme: 'Testing & Quality', status: 'locked', projects: []},
-    { id: '2026-07', name: 'July 2026', theme: 'Performance', status: 'locked', projects: []},
-    { id: '2026-08', name: 'August 2026', theme: 'Backend Mastery', status: 'locked', projects: []},
-    { id: '2026-09', name: 'September 2026', theme: 'Distributed', status: 'locked', projects: []},
-    { id: '2026-10', name: 'October 2026', theme: 'Open Source', status: 'locked', projects: []},
-    { id: '2026-11', name: 'November 2026', theme: 'Real-World Clone', status: 'locked', projects: []},
-    { id: '2026-12', name: 'December 2026', theme: 'Portfolio', status: 'locked', projects: []}
+const PROJECTS = [
+  { name: 'Smart Notes', emoji: '📝', desc: 'Note-taking app with rich formatting, local storage persistence, and markdown support', tech: 'Vanilla JS, LocalStorage, HTML5', url: './2025-12-zero-api-web/smart-notes-app/index.html' },
+  { name: 'Task Manager', emoji: '✅', desc: 'Todo list with categories, priorities, due dates, and persistent storage', tech: 'Vanilla JS, LocalStorage, CSS Grid', url: './2025-12-zero-api-web/task-manager/index.html' },
+  { name: 'HeartSync', emoji: '💗', desc: 'UI state management with interactive animations and user preference sync', tech: 'Vanilla JS, LocalStorage, Animations', url: './2025-12-zero-api-web/heart-sync/index.html' },
+  { name: 'Music Mood', emoji: '🎵', desc: 'Music player with mood tracking, playlists, and audio visualization', tech: 'HTML5 Audio, LocalStorage, Canvas', url: './2025-12-zero-api-web/music-mood/index.html' }
 ];
 
 let currentUser = null;
 
 function handleAuth(event) {
-    event.preventDefault();
-    const name = document.getElementById('nameInput').value.trim();
-    const password = document.getElementById('passwordInput').value.trim();
-    if (!name || !password) { alert('Please fill all fields'); return; }
-    const users = JSON.parse(localStorage.getItem('snakeeye_users') || '[]');
-    const existingUser = users.find(u => u.name.toLowerCase() === name.toLowerCase());
-    if (!exist
-User) { users.push({ name, passwordHash: btoa(password) }); localStorage.setItem('snakeeye_users', JSON.stringify(users)); } else if (btoa(password) !== existingUser.passwordHash) { alert('Invalid password!'); return; } currentUser = name; localStorage.setItem('snakeeye_currentUser', name); loginSuccess(); } function loginSuccess() { document.getElementById('authScreen').classList.add('hidden'); document.getElementById('appScreen').classList.add('active'); document.getElementById('currentUser').textContent = '👤 ' + currentUser; renderMonths(); } function renderMonths() { const grid = document.getElementById('monthsGrid'); grid.innerHTML = ''; MONTHS.forEach(month => { const card = document.createElement('div'); card.className = 'month-card ' + month.status; const projectsHtml = month.projects.length > 0 ? `<div class="project-list">📦 ${month.projects.map(p => p.name).join(', ')}</div>` : ''; card.innerHTML = `<div class="status-badge ${month.status}">${month.status.toUpperCase()}</div><h3>${month.name}</h3><p>${month.theme}</p>${projectsHtml}<div class="lock-icon">🔒</div>`; if (month.status === 'active' && month.projects.length > 0) { card.onclick = () => showProjectModal(month); } grid.appendChild(card); }); } function showProjectModal(month) { const modal = document.getElementById('projectModal'); const modalBody = document.getElementById('modalBody'); const modalTitle = document.getElementById('modalTitle'); modalTitle.textContent = month.name + ' - ' + month.theme; let html = `<div class="month-info"><h3>Theme: ${month.theme}</h3><p>${month.description}</p></div><div class="projects-container">`; month.projects.forEach(proj => { html += `<div class="project-card"><div class="project-emoji">${proj.emoji}</div><div class="project-name">${proj.name}</div><div class="project-desc">${proj.desc}</div><div class="project-tech">Tech: ${proj.tech}</div><a href="${proj.url}" class="project-link" target="_blank">View Project →</a></div>`; }); html += '</div>'; modalBody.innerHTML = html; modal.classList.add('active'); } function closeModal() { document.getElementById('projectModal').classList.remove('active'); } function logout() { localStorage.removeItem('snakeeye_currentUser'); location.reload(); } window.onload = () => { const saved = localStorage.getItem('snakeeye_currentUser'); if (saved) { currentUser = saved; loginSuccess(); } }; </script> </body> </html>
+  event.preventDefault();
+  const name = document.getElementById('nameInput').value.trim();
+  const password = document.getElementById('passwordInput').value.trim();
+  if (!name || !password) { alert('Please fill all fields'); return; }
+  const users = JSON.parse(localStorage.getItem('snakeeye_users') || '[]');
+  const existingUser = users.find(u => u.name.toLowerCase() === name.toLowerCase());
+  if (!existingUser) { users.push({ name, passwordHash: btoa(password) }); localStorage.setItem('snakeeye_users', JSON.stringify(users)); }
+  else if (btoa(password) !== existingUser.passwordHash) { alert('Invalid password!'); return; }
+  currentUser = name;
+  localStorage.setItem('snakeeye_currentUser', name);
+  showDecemberPage();
+}
+
+function showDecemberPage() {
+  document.getElementById('authPage').classList.remove('active');
+  document.getElementById('decemberPage').classList.add('active');
+  document.getElementById('currentUser').textContent = '👤 ' + currentUser;
+  renderProjects();
+}
+
+function renderProjects() {
+  const grid = document.getElementById('projectsGrid');
+  grid.innerHTML = '';
+  PROJECTS.forEach(proj => {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    card.innerHTML = `<div class="project-emoji">${proj.emoji}</div><div class="project-name">${proj.name}</div><div class="project-desc">${proj.desc}</div><div class="project-tech">Tech: ${proj.tech}</div><a href="${proj.url}" class="project-link" target="_blank">View Project →</a>`;
+    grid.appendChild(card);
+  });
+}
+
+function logout() {
+  localStorage.removeItem('snakeeye_currentUser');
+  location.reload();
+}
+
+window.onload = () => {
+  const saved = localStorage.getItem('snakeeye_currentUser');
+  if (saved) { currentUser = saved; showDecemberPage(); }
+};
+</script>
+</body>
+</html>
