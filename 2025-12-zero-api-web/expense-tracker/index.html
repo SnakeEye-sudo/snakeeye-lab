@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker - Financial Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --primary: #667eea; --secondary: #764ba2; --success: #4caf50; --danger: #f44336; --bg: #f5f7ff; }
+    body { font-family: 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); min-height: 100vh; padding: 20px; }
+    .container { max-width: 1000px; margin: 0 auto; background: var(--bg); border-radius: 16px; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+    h1 { color: var(--primary); margin-bottom: 25px; text-align: center; font-size: 2.5em; }
+    .input-section { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; margin-bottom: 30px; }
+    .input-section input, .input-section select { padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; }
+    .input-section input:focus, .input-section select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+    .input-section button { padding: 12px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .input-section button:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102,126,234,0.3); }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
+    .stat-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center; border-left: 5px solid var(--primary); }
+    .stat-card h3 { color: #666; font-size: 0.9em; margin-bottom: 8px; }
+    .stat-card .amount { font-size: 2em; font-weight: 700; color: var(--primary); }
+    .list-section { margin-bottom: 20px; }
+    .list-section h2 { color: var(--primary); margin-bottom: 15px; font-size: 1.3em; }
+    .expense-item { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: all 0.3s; border-left: 4px solid var(--primary); }
+    .expense-item:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .expense-info { flex: 1; }
+    .expense-name { font-weight: 600; color: #333; font-size: 1.05em; margin-bottom: 5px; }
+    .expense-meta { font-size: 0.85em; color: #999; }
+    .expense-amount { font-size: 1.2em; font-weight: 700; color: var(--danger); margin: 0 20px; }
+    .expense-item button { background: #ff5252; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+    .expense-item button:hover { background: #f44336; transform: scale(1.05); }
+    .category-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+    .category-badge { padding: 8px 12px; background: var(--primary); color: white; border-radius: 20px; font-size: 0.85em; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .category-badge:hover { opacity: 0.8; }
+    .category-badge.active { background: var(--secondary); }
+    .chart-container { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+    .chart-container h3 { color: var(--primary); margin-bottom: 15px; }
+    .category-chart { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+    .category-bar { background: #f0f0f0; padding: 10px; border-radius: 8px; }
+    .category-name { font-weight: 600; color: #333; margin-bottom: 5px; }
+    .bar { background: linear-gradient(135deg, var(--primary), var(--secondary)); height: 20px; border-radius: 4px; margin: 8px 0; position: relative; min-height: 20px; }
+    .bar-label { font-size: 0.85em; color: #666; margin-top: 5px; }
+    @media (max-width: 768px) { .input-section { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💰 Expense Tracker</h1>
+    
+    <div class="input-section">
+      <input type="text" id="expenseName" placeholder="Expense name" />
+      <input type="number" id="expenseAmount" placeholder="Amount" />
+      <select id="expenseCategory">
+        <option value="Food">🍔 Food</option>
+        <option value="Transport">🚗 Transport</option>
+        <option value="Entertainment">🎬 Entertainment</option>
+        <option value="Shopping">🛍️ Shopping</option>
+        <option value="Bills">💡 Bills</option>
+        <option value="Other">📌 Other</option>
+      </select>
+      <button onclick="addExpense()">Add</button>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Spent</h3>
+        <div class="amount" id="totalAmount">$0.00</div>
+      </div>
+      <div class="stat-card" style="border-left-color: var(--danger);">
+        <h3>This Month</h3>
+        <div class="amount" id="monthAmount" style="color: var(--danger);">$0.00</div>
+      </div>
+      <div class="stat-card" style="border-left-color: var(--success);">
+        <h3>Total Entries</h3>
+        <div class="amount" id="totalEntries" style="color: var(--success);">0</div>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <h3>📊 Spending by Category</h3>
+      <div class="category-chart" id="categoryChart"></div>
+    </div>
+    
+    <div class="list-section">
+      <h2>Recent Expenses</h2>
+      <div id="expenseList"></div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'expenses';
+    let expenses = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    function addExpense() {
+      const name = document.getElementById('expenseName').value.trim();
+      const amount = parseFloat(document.getElementById('expenseAmount').value);
+      const category = document.getElementById('expenseCategory').value;
+      
+      if (!name || !amount || amount <= 0) { alert('Please fill all fields'); return; }
+      
+      const expense = { id: Date.now(), name, amount, category, date: new Date().toLocaleDateString() };
+      expenses.unshift(expense);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
+      
+      document.getElementById('expenseName').value = '';
+      document.getElementById('expenseAmount').value = '';
+      render();
+    }
+
+    function deleteExpense(id) {
+      expenses = expenses.filter(e => e.id !== id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses));
+      render();
+    }
+
+    function render() {
+      const list = document.getElementById('expenseList');
+      list.innerHTML = expenses.length === 0 ? '<p style="text-align: center; color: #999; padding: 20px;">No expenses yet. Add one to get started!</p>' : '';
+      
+      expenses.forEach(exp => {
+        const div = document.createElement('div');
+        div.className = 'expense-item';
+        const categoryEmoji = { Food: '🍔', Transport: '🚗', Entertainment: '🎬', Shopping: '🛍️', Bills: '💡', Other: '📌' }[exp.category];
+        div.innerHTML = `<div class="expense-info"><div class="expense-name">${categoryEmoji} ${exp.name}</div><div class="expense-meta">${exp.category} • ${exp.date}</div></div><div class="expense-amount">$${exp.amount.toFixed(2)}</div><button onclick="deleteExpense(${exp.id})">Delete</button>`;
+        list.appendChild(div);
+      });
+
+      const total = expenses.reduce((sum, e) => sum + e.amount, 0);
+      const thisMonth = expenses.filter(e => new Date(e.date).getMonth() === new Date().getMonth()).reduce((sum, e) => sum + e.amount, 0);
+      document.getElementById('totalAmount').textContent = '$' + total.toFixed(2);
+      document.getElementById('monthAmount').textContent = '$' + thisMonth.toFixed(2);
+      document.getElementById('totalEntries').textContent = expenses.length;
+
+      const chart = document.getElementById('categoryChart');
+      chart.innerHTML = '';
+      const byCategory = {};
+      expenses.forEach(e => { byCategory[e.category] = (byCategory[e.category] || 0) + e.amount; });
+      const maxAmount = Math.max(...Object.values(byCategory), 1);
+      
+      Object.entries(byCategory).forEach(([cat, amount]) => {
+        const pct = (amount / maxAmount) * 100;
+        const catEmoji = { Food: '🍔', Transport: '🚗', Entertainment: '🎬', Shopping: '🛍️', Bills: '💡', Other: '📌' }[cat];
+        const div = document.createElement('div');
+        div.className = 'category-bar';
+        div.innerHTML = `<div class="category-name">${catEmoji} ${cat}</div><div class="bar" style="width: ${pct}%;"></div><div class="bar-label">$${amount.toFixed(2)}</div>`;
+        chart.appendChild(div);
+      });
+    }
+
+    render();
+    document.getElementById('expenseAmount').addEventListener('keypress', (e) => { if (e.key === 'Enter') addExpense(); });
+  </script>
+</body>
+</html>
