@@ -3,145 +3,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SnakeEye Lab - Dashboard</title>
+  <title>SnakeEye Lab | December 2025</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { --primary: #667eea; --secondary: #764ba2; --success: #4caf50; --bg-dark: #0f1419; --bg-light: #ffffff; }
-    body { font-family: 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); min-height: 100vh; transition: all 0.3s; }
-    body.focus-mode { background: var(--bg-dark); color: #ddd; }
-    .hidden { display: none !important; }
-    .page { display: none; }
-    .page.active { display: block; }
-    .auth-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-    .auth-box { background: var(--bg-light); border-radius: 16px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 400px; width: 100%; animation: slideUp 0.5s ease-out; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    .auth-box h2 { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 20px; font-size: 2em; text-align: center; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
-    .form-group input { width: 100%; padding: 12px 15px; border: 2px solid #e8e8f0; border-radius: 8px; font-size: 1em; transition: all 0.3s; }
-    .form-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
-    .btn { padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; font-size: 1em; transition: all 0.3s; }
-    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; margin-top: 20px; }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102,126,234,0.4); }
-    .app-container { min-height: 100vh; padding-bottom: 80px; background: linear-gradient(135deg, #f5f7ff 0%, #f9f5ff 100%); }
-    .app-header { background: var(--bg-light); padding: 20px 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; }
-    .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-size: 1.8em; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .nav-buttons { display: flex; gap: 10px; }
-    .nav-btn { background: var(--primary); color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
-    .nav-btn.active { background: var(--secondary); }
-    .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.3); }
-    .main-content { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-    .dashboard-header { text-align: center; margin-bottom: 50px; }
-    .dashboard-header h1 { font-size: 2.5em; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px; }
+    :root { --primary: #667eea; --secondary: #764ba2; }
+    body { font-family: 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+    .header { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 40px; text-align: center; }
+    .header h1 { font-size: 2.5em; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+    .theme { color: #666; font-size: 1.1em; margin-bottom: 10px; }
+    .desc { color: #888; font-size: 0.95em; max-width: 600px; margin: 0 auto; }
     .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-    .project-card { background: var(--bg-light); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid transparent; }
-    .project-card:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(102,126,234,0.3); border-color: var(--primary); }
-    .project-emoji { font-size: 3em; margin-bottom: 10px; }
-    .project-name { font-size: 1.3em; font-weight: 700; color: #333; margin-bottom: 8px; }
-    .project-desc { color: #666; font-size: 0.95em; margin-bottom: 15px; line-height: 1.5; }
-    .project-tech { font-size: 0.85em; color: var(--primary); font-weight: 600; margin-bottom: 12px; }
-    .project-link { display: inline-block; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9em; font-weight: 600; transition: all 0.3s; }
-    .project-link:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
-    .month-header { background: #f0f0f8; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
-    .month-header h2 { color: var(--primary); margin-bottom: 8px; }
-    .month-header p { color: #666; }
-    @media (max-width: 768px) { .dashboard-header h1 { font-size: 1.8em; } .projects-grid { grid-template-columns: 1fr; } .nav-buttons { flex-wrap: wrap; } }
+    .project { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s; border: 2px solid transparent; }
+    .project:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(102,126,234,0.3); border-color: var(--primary); }
+    .emoji { font-size: 3em; margin-bottom: 10px; }
+    .title { font-size: 1.3em; font-weight: 700; color: #333; margin-bottom: 8px; }
+    .text { color: #666; font-size: 0.95em; line-height: 1.5; margin-bottom: 12px; }
+    .tech { font-size: 0.85em; color: var(--primary); font-weight: 600; margin-bottom: 12px; }
+    .link { display: inline-block; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9em; font-weight: 600; }
+    .link:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+    @media (max-width: 768px) { .header h1 { font-size: 1.8em; } }
   </style>
 </head>
 <body>
-<div id="authPage" class="page active">
-  <div class="auth-container">
-    <div class="auth-box">
-      <h2>Register / Login</h2>
-      <form onsubmit="handleAuth(event)">
-        <div class="form-group">
-          <label>Your Name</label>
-          <input type="text" id="nameInput" placeholder="Enter your name" required>
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" id="passwordInput" placeholder="Create a password" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Register / Login</button>
-      </form>
+  <div class="container">
+    <div class="header">
+      <h1>🐍 SnakeEye Lab</h1>
+      <div class="theme">🎯 December 2025: Zero-API Web Apps</div>
+      <div class="desc">Pure JavaScript, Local Storage, Offline-First - Building production-ready apps without external APIs</div>
     </div>
-  </div>
-</div>
-
-<div id="decemberPage" class="page">
-  <div class="app-header">
-    <div class="header-content">
-      <div class="logo">🐍 SnakeEye Lab</div>
-      <div class="nav-buttons">
-        <button class="nav-btn" onclick="logout()">Logout</button>
+    <div class="projects-grid">
+      <div class="project">
+        <div class="emoji">📝</div>
+        <div class="title">Smart Notes</div>
+        <div class="text">Note-taking app with rich formatting, local storage persistence, and markdown support</div>
+        <div class="tech">Vanilla JS, LocalStorage, HTML5</div>
+        <a href="./2025-12-zero-api-web/smart-notes-app/index.html" class="link" target="_blank">View Project →</a>
+      </div>
+      <div class="project">
+        <div class="emoji">✅</div>
+        <div class="title">Task Manager</div>
+        <div class="text">Todo list with categories, priorities, due dates, and persistent storage</div>
+        <div class="tech">Vanilla JS, LocalStorage, CSS Grid</div>
+        <a href="./2025-12-zero-api-web/task-manager/index.html" class="link" target="_blank">View Project →</a>
+      </div>
+      <div class="project">
+        <div class="emoji">💗</div>
+        <div class="title">HeartSync</div>
+        <div class="text">UI state management with interactive animations and user preference sync</div>
+        <div class="tech">Vanilla JS, LocalStorage, Animations</div>
+        <a href="./2025-12-zero-api-web/heart-sync/index.html" class="link" target="_blank">View Project →</a>
+      </div>
+      <div class="project">
+        <div class="emoji">🎵</div>
+        <div class="title">Music Mood</div>
+        <div class="text">Music player with mood tracking, playlists, and audio visualization</div>
+        <div class="tech">HTML5 Audio, LocalStorage, Canvas</div>
+        <a href="./2025-12-zero-api-web/music-mood/index.html" class="link" target="_blank">View Project →</a>
       </div>
     </div>
   </div>
-  <div class="main-content">
-    <div class="dashboard-header">
-      <h1>December 2025 Projects</h1>
-      <p id="currentUser"></p>
-    </div>
-    <div class="month-header">
-      <h2>🎯 Theme: Zero-API Web Apps</h2>
-      <p>Pure JavaScript, Local Storage, Offline-First - Building without external APIs, mastering vanilla JS state management and UX design</p>
-    </div>
-    <div class="projects-grid" id="projectsGrid"></div>
-  </div>
-</div>
-
-<script>
-const PROJECTS = [
-  { name: 'Smart Notes', emoji: '📝', desc: 'Note-taking app with rich formatting, local storage persistence, and markdown support', tech: 'Vanilla JS, LocalStorage, HTML5', url: './2025-12-zero-api-web/smart-notes-app/index.html' },
-  { name: 'Task Manager', emoji: '✅', desc: 'Todo list with categories, priorities, due dates, and persistent storage', tech: 'Vanilla JS, LocalStorage, CSS Grid', url: './2025-12-zero-api-web/task-manager/index.html' },
-  { name: 'HeartSync', emoji: '💗', desc: 'UI state management with interactive animations and user preference sync', tech: 'Vanilla JS, LocalStorage, Animations', url: './2025-12-zero-api-web/heart-sync/index.html' },
-  { name: 'Music Mood', emoji: '🎵', desc: 'Music player with mood tracking, playlists, and audio visualization', tech: 'HTML5 Audio, LocalStorage, Canvas', url: './2025-12-zero-api-web/music-mood/index.html' }
-];
-
-let currentUser = null;
-
-function handleAuth(event) {
-  event.preventDefault();
-  const name = document.getElementById('nameInput').value.trim();
-  const password = document.getElementById('passwordInput').value.trim();
-  if (!name || !password) { alert('Please fill all fields'); return; }
-  const users = JSON.parse(localStorage.getItem('snakeeye_users') || '[]');
-  const existingUser = users.find(u => u.name.toLowerCase() === name.toLowerCase());
-  if (!existingUser) { users.push({ name, passwordHash: btoa(password) }); localStorage.setItem('snakeeye_users', JSON.stringify(users)); }
-  else if (btoa(password) !== existingUser.passwordHash) { alert('Invalid password!'); return; }
-  currentUser = name;
-  localStorage.setItem('snakeeye_currentUser', name);
-  showDecemberPage();
-}
-
-function showDecemberPage() {
-  document.getElementById('authPage').classList.remove('active');
-  document.getElementById('decemberPage').classList.add('active');
-  document.getElementById('currentUser').textContent = '👤 ' + currentUser;
-  renderProjects();
-}
-
-function renderProjects() {
-  const grid = document.getElementById('projectsGrid');
-  grid.innerHTML = '';
-  PROJECTS.forEach(proj => {
-    const card = document.createElement('div');
-    card.className = 'project-card';
-    card.innerHTML = `<div class="project-emoji">${proj.emoji}</div><div class="project-name">${proj.name}</div><div class="project-desc">${proj.desc}</div><div class="project-tech">Tech: ${proj.tech}</div><a href="${proj.url}" class="project-link" target="_blank">View Project →</a>`;
-    grid.appendChild(card);
-  });
-}
-
-function logout() {
-  localStorage.removeItem('snakeeye_currentUser');
-  location.reload();
-}
-
-window.onload = () => {
-  const saved = localStorage.getItem('snakeeye_currentUser');
-  if (saved) { currentUser = saved; showDecemberPage(); }
-};
-</script>
 </body>
 </html>
