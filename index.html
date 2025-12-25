@@ -3,184 +3,394 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SnakeEye Lab | December 2025</title>
+  <title>SnakeEye Lab | Zero-API Web Apps</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { --primary: #667eea; --secondary: #764ba2; }
-    body { font-family: 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); min-height: 100vh; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-    .header { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 40px; text-align: center; }
-    .header h1 { font-size: 2.5em; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-    .theme { color: #666; font-size: 1.1em; margin-bottom: 10px; }
-    .desc { color: #888; font-size: 0.95em; max-width: 600px; margin: 0 auto; }
-    .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-    .project { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s; border: 2px solid transparent; }
-    .project:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(102,126,234,0.3); border-color: var(--primary); }
-    .emoji { font-size: 3em; margin-bottom: 10px; }
-    .title { font-size: 1.3em; font-weight: 700; color: #333; margin-bottom: 8px; }
-    .text { color: #666; font-size: 0.95em; line-height: 1.5; margin-bottom: 12px; }
-    .tech { font-size: 0.85em; color: var(--primary); font-weight: 600; margin-bottom: 12px; }
-    .link { display: inline-block; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.9em; font-weight: 600; }
-    .link:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
-    @media (max-width: 768px) { .header h1 { font-size: 1.8em; } }
+    :root {
+      --primary: #667eea;
+      --secondary: #764ba2;
+      --accent: #ff6b6b;
+      --dark: #1a1a2e;
+      --light: #f8f9fa;
+    }
+    
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      min-height: 100vh;
+      color: var(--dark);
+    }
+    
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+    
+    /* Header Section */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 60px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      margin-bottom: 60px;
+      border-radius: 20px;
+      margin-top: 20px;
+      animation: slideDown 0.8s ease-out;
+    }
+    
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+    }
+    
+    .header h1 {
+      font-size: 3.5em;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 15px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      animation: fadeIn 1s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .theme-tag {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-size: 1em;
+      font-weight: 700;
+      margin-bottom: 20px;
+      animation: bounce 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    .desc {
+      color: #666;
+      font-size: 1.15em;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.7;
+      font-weight: 500;
+    }
+    
+    /* Projects Grid */
+    .projects-section { padding: 40px 0; }
+    
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 28px;
+      animation: fadeInUp 1s ease-out 0.3s both;
+    }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .project {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .project::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .project:hover::before {
+      left: 100%;
+    }
+    
+    .project:hover {
+      transform: translateY(-15px) scale(1.02);
+      box-shadow: 0 30px 70px rgba(102, 126, 234, 0.35);
+      border-color: var(--primary);
+    }
+    
+    .emoji {
+      font-size: 3.5em;
+      margin-bottom: 15px;
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+    
+    .project:hover .emoji {
+      transform: scale(1.2) rotate(10deg);
+    }
+    
+    .title {
+      font-size: 1.4em;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+    
+    .text {
+      color: #666;
+      font-size: 0.95em;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+    
+    .tech {
+      font-size: 0.85em;
+      color: var(--primary);
+      font-weight: 700;
+      margin-bottom: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .tech-tag {
+      background: rgba(102, 126, 234, 0.1);
+      padding: 4px 10px;
+      border-radius: 20px;
+      color: var(--primary);
+    }
+    
+    .link {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 0.95em;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .link::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    
+    .link:hover::after {
+      width: 300px;
+      height: 300px;
+    }
+    
+    .link:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+    }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: white;
+      font-size: 0.95em;
+      margin-top: 80px;
+    }
+    
+    .footer a {
+      color: #fff;
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      .header h1 { font-size: 2.2em; }
+      .header { padding: 40px 20px; }
+      .projects-grid { grid-template-columns: 1fr; gap: 20px; }
+      .desc { font-size: 1em; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
+      <div class="theme-tag">🚀 2025 SHOWCASE</div>
       <h1>🐍 SnakeEye Lab</h1>
-      <div class="theme">🎯 December 2025: Zero-API Web Apps</div>
-      <div class="desc">Pure JavaScript, Local Storage, Offline-First - Building production-ready apps without external APIs</div>
+      <div class="desc"><strong>December 2025: Zero-API Web Apps</strong><br/>Pure JavaScript, Local Storage, Offline-First - Building production-ready apps without external APIs</div>
     </div>
-    <div class="projects-grid">
-      <div class="project">
-        <div class="emoji">📝</div>
-        <div class="title">Smart Notes</div>
-        <div class="text">Note-taking app with rich formatting, local storage persistence, and markdown support</div>
-        <div class="tech">Vanilla JS, LocalStorage, HTML5</div>
-        <a href="./2025-12-zero-api-web/smart-notes-app/index.html" class="link" target="_blank">View Project →</a>
-      </div>
-      <div class="project">
-        <div class="emoji">✅</div>
-        <div class="title">Task Manager</div>
-        <div class="text">Todo list with categories, priorities, due dates, and persistent storage</div>
-        <div class="tech">Vanilla JS, LocalStorage, CSS Grid</div>
-        <a href="./2025-12-zero-api-web/task-manager/index.html" class="link" target="_blank">View Project →</a>
-      </div>
-      <div class="project">
-        <div class="emoji">💗</div>
-        <div class="title">HeartSync</div>
-        <div class="text">UI state management with interactive animations and user preference sync</div>
-        <div class="tech">Vanilla JS, LocalStorage, Animations</div>
-        <a href="./2025-12-zero-api-web/heart-sync/index.html" class="link" target="_blank">View Project →</a>
-      </div>
 
-            <div class="project">
-        <div class="emoji">💰</div>
-        <div class="title">Expense Tracker</div>
-        <div class="text">Financial management with 6 categories, spending analytics, category charts, and persistent LocalStorage</div>
-        <div class="tech">Vanilla JS, LocalStorage, Charts</div>
-        <a href="./2025-12-zero-api-web/expense-tracker/index.html" class="link" target="_blank">View Project →</a>
+    <div class="projects-section">
+      <div class="projects-grid">
+        <!-- Project Cards -->
+        <div class="project">
+          <div class="emoji">📝</div>
+          <div class="title">Smart Notes</div>
+          <div class="text">Note-taking with rich formatting, local storage persistence, and markdown support</div>
+          <div class="tech"><span class="tech-tag">Vanilla JS</span><span class="tech-tag">LocalStorage</span></div>
+          <a href="./2025-12-zero-api-web/smart-notes-app/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">✅</div>
+          <div class="title">Task Manager</div>
+          <div class="text">Todo list with categories, priorities, due dates, and persistent storage</div>
+          <div class="tech"><span class="tech-tag">Vanilla JS</span><span class="tech-tag">CSS Grid</span></div>
+          <a href="./2025-12-zero-api-web/task-manager/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">💗</div>
+          <div class="title">HeartSync</div>
+          <div class="text">UI state management with interactive animations and user preference sync</div>
+          <div class="tech"><span class="tech-tag">Animations</span><span class="tech-tag">React-like</span></div>
+          <a href="./2025-12-zero-api-web/heart-sync/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">💰</div>
+          <div class="title">Expense Tracker</div>
+          <div class="text">Financial management with analytics, category charts, and persistent storage</div>
+          <div class="tech"><span class="tech-tag">Charts</span><span class="tech-tag">Analytics</span></div>
+          <a href="./2025-12-zero-api-web/expense-tracker/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">🎨</div>
+          <div class="title">Color Picker</div>
+          <div class="text">Interactive color palette with hex, RGB, HSL converters, and color history</div>
+          <div class="tech"><span class="tech-tag">Canvas</span><span class="tech-tag">Color Tools</span></div>
+          <a href="./2025-12-zero-api-web/color-picker/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">🎵</div>
+          <div class="title">Mood Music Player</div>
+          <div class="text">Ambient music with mood-based playlists, sound visualization, and volume control</div>
+          <div class="tech"><span class="tech-tag">Web Audio API</span><span class="tech-tag">Visualization</span></div>
+          <a href="./2025-12-zero-api-web/mood-music-player/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">🎮</div>
+          <div class="title">Memory Game</div>
+          <div class="text">Classic memory matching game with difficulty levels, scoring, and leaderboard</div>
+          <div class="tech"><span class="tech-tag">CSS Animations</span><span class="tech-tag">Game Logic</span></div>
+          <a href="./2025-12-zero-api-web/memory-game/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">📊</div>
+          <div class="title">Habit Tracker</div>
+          <div class="text">Daily habit tracking with calendar view, streak counting, and progress visualization</div>
+          <div class="tech"><span class="tech-tag">Calendar</span><span class="tech-tag">Charts</span></div>
+          <a href="./2025-12-zero-api-web/habit-tracker/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">🌡️</div>
+          <div class="title">Weather Dashboard</div>
+          <div class="text">Local weather display with forecasts, climate visualization, and location settings</div>
+          <div class="tech"><span class="tech-tag">Chart.js</span><span class="tech-tag">Data Viz</span></div>
+          <a href="./2025-12-zero-api-web/weather-dashboard/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">🎯</div>
+          <div class="title">Pomodoro Timer</div>
+          <div class="text">Productivity timer with custom intervals, break notifications, and session statistics</div>
+          <div class="tech"><span class="tech-tag">Web Notifications</span><span class="tech-tag">Timer</span></div>
+          <a href="./2025-12-zero-api-web/pomodoro-timer/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">🖼️</div>
+          <div class="title">Image Gallery</div>
+          <div class="text">Responsive gallery with lightbox, filters, sorting, and local image upload</div>
+          <div class="tech"><span class="tech-tag">CSS Grid</span><span class="tech-tag">Lightbox</span></div>
+          <a href="./2025-12-zero-api-web/image-gallery/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">🔐</div>
+          <div class="title">Password Generator</div>
+          <div class="text">Secure password generation with customization, strength checker, copy-to-clipboard</div>
+          <div class="tech"><span class="tech-tag">Crypto API</span><span class="tech-tag">Security</span></div>
+          <a href="./2025-12-zero-api-web/password-generator/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">📅</div>
+          <div class="title">Calendar Planner</div>
+          <div class="text">Monthly calendar with event scheduling, reminders, and color-coded categories</div>
+          <div class="tech"><span class="tech-tag">Calendar Logic</span><span class="tech-tag">Events</span></div>
+          <a href="./2025-12-zero-api-web/calendar-planner/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">🎲</div>
+          <div class="title">Dice Roller</div>
+          <div class="text">Tabletop gaming dice roller with history, probability calculator, multiple dice types</div>
+          <div class="tech"><span class="tech-tag">Math</span><span class="tech-tag">Gaming</span></div>
+          <a href="./2025-12-zero-api-web/dice-roller/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">📝</div>
+          <div class="title">Markdown Editor</div>
+          <div class="text">Real-time markdown editor with live preview, syntax highlighting, and document management</div>
+          <div class="tech"><span class="tech-tag">Markdown Parser</span><span class="tech-tag">Editor</span></div>
+          <a href="./2025-12-zero-api-web/markdown-editor/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">⏱️</div>
+          <div class="title">Stopwatch</div>
+          <div class="text">Precision stopwatch with lap timing, statistics, and performance analytics</div>
+          <div class="tech"><span class="tech-tag">Timing API</span><span class="tech-tag">Analytics</span></div>
+          <a href="./2025-12-zero-api-web/stopwatch/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">🎬</div>
+          <div class="title">Movie Watchlist</div>
+          <div class="text">Movie catalog with ratings, reviews, watchlist management, and genre filtering</div>
+          <div class="tech"><span class="tech-tag">Search Filter</span><span class="tech-tag">CRUD</span></div>
+          <a href="./2025-12-zero-api-web/movie-watchlist/index.html" class="link" target="_blank">View Project →</a>
+        </div>
+        <div class="project">
+          <div class="emoji">💡</div>
+          <div class="title">Idea Notebook</div>
+          <div class="text">Quick idea capture with tagging, search, and organization by categories and timestamps</div>
+          <div class="tech"><span class="tech-tag">Full-Text Search</span><span class="tech-tag">Tagging</span></div>
+          <a href="./2025-12-zero-api-web/idea-notebook/index.html" class="link" target="_blank">View Project →</a>
+        </div>
       </div>
+    </div>
+
+    <div class="footer">
+      <p>✨ <strong>SnakeEye Lab</strong> - Zero-API Web Apps Showcase | <a href="https://github.com/SnakeEye-sudo/snakeeye-lab" target="_blank">GitHub</a></p>
+      <p style="margin-top: 10px; opacity: 0.8;">Made with ❤️ using Pure JavaScript | All apps work offline with LocalStorage</p>
+    </div>
   </div>
-     <div class="project">
- <div class="emoji">🎨</div>
- <div class="title">Color Picker</div>
- <div class="text">Interactive color palette with hex, RGB, and HSL converters, color history, and export options</div>
- <div class="tech">Vanilla JS, LocalStorage, Canvas</div>
- <a href="./2025-12-zero-api-web/color-picker/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">🎵</div>
- <div class="title">Mood Music Player</div>
- <div class="text">Ambient music player with mood-based playlists, sound visualization, and volume control</div>
- <div class="tech">Vanilla JS, Web Audio API, LocalStorage</div>
- <a href="./2025-12-zero-api-web/mood-music-player/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">🎮</div>
- <div class="title">Memory Game</div>
- <div class="text">Classic memory matching game with difficulty levels, score tracking, and leaderboard</div>
- <div class="tech">Vanilla JS, LocalStorage, CSS Animations</div>
- <a href="./2025-12-zero-api-web/memory-game/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">📊</div>
- <div class="title">Habit Tracker</div>
- <div class="text">Daily habit tracking with calendar view, streak counting, and progress visualization</div>
- <div class="tech">Vanilla JS, LocalStorage, Charts</div>
- <a href="./2025-12-zero-api-web/habit-tracker/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">📖</div>
- <div class="title">Reading List</div>
- <div class="text">Book management system with ratings, reviews, reading progress, and personal library</div>
- <div class="tech">Vanilla JS, LocalStorage, Search & Filter</div>
- <a href="./2025-12-zero-api-web/reading-list/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">🌡️</div>
- <div class="title">Weather Dashboard</div>
- <div class="text">Local weather display with forecasts, climate data visualization, and location settings</div>
- <div class="tech">Vanilla JS, LocalStorage, Chart.js</div>
- <a href="./2025-12-zero-api-web/weather-dashboard/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">🎯</div>
- <div class="title">Pomodoro Timer</div>
- <div class="text">Productivity timer with custom intervals, break notifications, and session statistics</div>
- <div class="tech">Vanilla JS, LocalStorage, Web Notifications</div>
- <a href="./2025-12-zero-api-web/pomodoro-timer/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">🖼️</div>
- <div class="title">Image Gallery</div>
- <div class="text">Responsive image gallery with lightbox, filters, sorting, and local image upload</div>
- <div class="tech">Vanilla JS, LocalStorage, CSS Grid</div>
- <a href="./2025-12-zero-api-web/image-gallery/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">🔐</div>
- <div class="title">Password Generator</div>
- <div class="text">Secure password generator with customization, strength checker, and copy-to-clipboard</div>
- <div class="tech">Vanilla JS, LocalStorage, Crypto API</div>
- <a href="./2025-12-zero-api-web/password-generator/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">📅</div>
- <div class="title">Calendar Planner</div>
- <div class="text">Monthly calendar with event scheduling, reminders, and color-coded categories</div>
- <div class="tech">Vanilla JS, LocalStorage, Calendar Logic</div>
- <a href="./2025-12-zero-api-web/calendar-planner/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">🎲</div>
- <div class="title">Dice Roller</div>
- <div class="text">Tabletop gaming dice roller with history, probability calculator, and multiple dice types</div>
- <div class="tech">Vanilla JS, LocalStorage, Math</div>
- <a href="./2025-12-zero-api-web/dice-roller/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">🔍</div>
- <div class="title">QR Code Generator</div>
- <div class="text">QR code generator for URLs, text, and contact info with customization and download</div>
- <div class="tech">Vanilla JS, QR Library, Canvas</div>
- <a href="./2025-12-zero-api-web/qr-code-generator/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">🌙</div>
- <div class="title">Dark Mode Toggle</div>
- <div class="text">Universal dark mode switcher with theme persistence and customizable color schemes</div>
- <div class="tech">Vanilla JS, LocalStorage, CSS Variables</div>
- <a href="./2025-12-zero-api-web/dark-mode-toggle/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">📝</div>
- <div class="title">Markdown Editor</div>
- <div class="text">Real-time markdown editor with preview, syntax highlighting, and document management</div>
- <div class="tech">Vanilla JS, LocalStorage, Markdown Parser</div>
- <a href="./2025-12-zero-api-web/markdown-editor/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">⏱️</div>
- <div class="title">Stopwatch</div>
- <div class="text">Precision stopwatch with lap timing, statistics, and performance analytics</div>
- <div class="tech">Vanilla JS, LocalStorage, Timing API</div>
- <a href="./2025-12-zero-api-web/stopwatch/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">🎬</div>
- <div class="title">Movie Watchlist</div>
- <div class="text">Movie catalog with ratings, reviews, watchlist management, and genre filtering</div>
- <div class="tech">Vanilla JS, LocalStorage, Search Filter</div>
- <a href="./2025-12-zero-api-web/movie-watchlist/index.html" class="link" target="_blank">View Project →</a>
- </div>
- <div class="project">
- <div class="emoji">💡</div>
- <div class="title">Idea Notebook</div>
- <div class="text">Quick idea capture with tagging, search, and organization by categories and timestamps</div>
- <div class="tech">Vanilla JS, LocalStorage, Full-Text Search</div>
- <a href="./2025-12-zero-api-web/idea-notebook/index.html" class="link" target="_blank">View Project →</a>
- </div>
 </body>
 </html>
