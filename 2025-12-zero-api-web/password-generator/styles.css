@@ -18,4 +18,5 @@ button:hover{background:var(--secondary);transform:translateY(-2px);box-shadow:0
 @media(max-width:600px){.container{padding:20px}
 h1{font-size:1.5rem}
 .controls{flex-direction:column}
+#password{background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:20px;margin:20px 0;text-align:center;min-height:60px;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:1.1rem;word-break:break-all;color:var(--text)}
 input{min-width:100%}
