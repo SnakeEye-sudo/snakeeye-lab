@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker - Interactive Color Palette</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .color-display {
+            width: 100%;
+            height: 150px;
+            border-radius: 10px;
+            background: #667eea;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: background 0.3s ease;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .input-group input[type="color"] {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .input-group input[type="text"],
+        .input-group input[type="range"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input[type="text"]:focus,
+        .input-group input[type="range"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .color-values {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .value-item {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .value-item label {
+            display: block;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .value-item input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .export-btn {
+            background: #764ba2;
+            color: white;
+        }
+
+        .export-btn:hover {
+            background: #652b8e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(118, 75, 162, 0.4);
+        }
+
+        .random-btn {
+            background: #48bb78;
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .random-btn:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+        }
+
+        .history {
+            margin-top: 30px;
+            border-top: 2px solid #e0e0e0;
+            padding-top: 20px;
+        }
+
+        .history h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .history-colors {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 10px;
+        }
+
+        .history-color {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .history-color:hover {
+            border-color: #667eea;
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .copy-feedback {
+            text-align: center;
+            color: #48bb78;
+            font-size: 12px;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .copy-feedback.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>퉰 Color Picker</h1>
+        
+        <div class="color-display" id="colorDisplay"></div>
+        
+        <div class="input-group">
+            <label>Select Color</label>
+            <input type="color" id="colorInput" value="#667eea">
+        </div>
+
+        <div class="color-values">
+            <div class="value-item">
+                <label>HEX</label>
+                <input type="text" id="hexValue" readonly>
+            </div>
+            <div class="value-item">
+                <label>RGB</label>
+                <input type="text" id="rgbValue" readonly>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>HSL</label>
+            <input type="text" id="hslValue" readonly>
+        </div>
+
+        <div class="buttons">
+            <button class="copy-btn" id="copyHex">Copy HEX</button>
+            <button class="copy-btn" id="copyRgb">Copy RGB</button>
+            <button class="export-btn" id="exportColors">Export History</button>
+            <button class="random-btn" id="randomBtn">Random Color</button>
+        </div>
+
+        <div class="copy-feedback" id="feedback">Copied to clipboard!</div>
+
+        <div class="history">
+            <h3>Color History</h3>
+            <div class="history-colors" id="historyColors"></div>
+        </div>
+    </div>
+
+    <script>
+        const colorInput = document.getElementById('colorInput');
+        const colorDisplay = document.getElementById('colorDisplay');
+        const hexValue = document.getElementById('hexValue');
+        const rgbValue = document.getElementById('rgbValue');
+        const hslValue = document.getElementById('hslValue');
+        const copyHexBtn = document.getElementById('copyHex');
+        const copyRgbBtn = document.getElementById('copyRgb');
+        const exportBtn = document.getElementById('exportColors');
+        const randomBtn = document.getElementById('randomBtn');
+        const historyContainer = document.getElementById('historyColors');
+        const feedback = document.getElementById('feedback');
+
+        let colorHistory = JSON.parse(localStorage.getItem('colorHistory')) || [];
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+
+            return {
+                h: Math.round(h * 360),
+                s: Math.round(s * 100),
+                l: Math.round(l * 100)
+            };
+        }
+
+        function updateColor(hex) {
+            colorInput.value = hex;
+            colorDisplay.style.background = hex;
+            hexValue.value = hex.toUpperCase();
+
+            const rgb = hexToRgb(hex);
+            rgbValue.value = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+
+            const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+            hslValue.value = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+
+            addToHistory(hex);
+        }
+
+        function addToHistory(hex) {
+            if (!colorHistory.includes(hex.toUpperCase())) {
+                colorHistory.unshift(hex.toUpperCase());
+                if (colorHistory.length > 12) {
+                    colorHistory.pop();
+                }
+                localStorage.setItem('colorHistory', JSON.stringify(colorHistory));
+                renderHistory();
+            }
+        }
+
+        function renderHistory() {
+            historyContainer.innerHTML = '';
+            colorHistory.forEach(color => {
+                const colorBox = document.createElement('div');
+                colorBox.className = 'history-color';
+                colorBox.style.background = color;
+                colorBox.title = color;
+                colorBox.onclick = () => updateColor(color);
+                historyContainer.appendChild(colorBox);
+            });
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                feedback.classList.add('show');
+                setTimeout(() => feedback.classList.remove('show'), 2000);
+            });
+        }
+
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function exportColors() {
+            const colorData = {
+                exported: new Date().toLocaleString(),
+                colors: colorHistory
+            };
+            const dataStr = JSON.stringify(colorData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `color-history-${Date.now()}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Event Listeners
+        colorInput.addEventListener('change', (e) => updateColor(e.target.value));
+        colorInput.addEventListener('input', (e) => updateColor(e.target.value));
+        
+        copyHexBtn.addEventListener('click', () => {
+            copyToClipboard(hexValue.value);
+        });
+        
+        copyRgbBtn.addEventListener('click', () => {
+            copyToClipboard(rgbValue.value);
+        });
+        
+        exportBtn.addEventListener('click', exportColors);
+        randomBtn.addEventListener('click', () => {
+            updateColor(getRandomColor());
+        });
+
+        // Initialize
+        updateColor('#667eea');
+        renderHistory();
+    </script>
+</body>
+</html>
