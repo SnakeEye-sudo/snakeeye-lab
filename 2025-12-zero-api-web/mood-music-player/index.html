@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Mood Music Player</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Mood Music Player</h1>
+            <p>Select your mood and enjoy curated ambient music</p>
+        </div>
+
+        <div class="mood-selector">
+            <button class="mood-btn" data-mood="focus">🎯 Focus</button>
+            <button class="mood-btn" data-mood="relax">😌 Relax</button>
+            <button class="mood-btn" data-mood="energetic">⚡ Energetic</button>
+            <button class="mood-btn" data-mood="sleep">😴 Sleep</button>
+        </div>
+
+        <div class="player">
+            <div class="visualizer">
+                <canvas id="visualizer"></canvas>
+            </div>
+            <div class="controls">
+                <button id="playBtn" class="control-btn">▶ Play</button>
+                <button id="pauseBtn" class="control-btn">⏸ Pause</button>
+                <div class="volume-control">
+                    <label>Volume:</label>
+                    <input type="range" id="volumeControl" min="0" max="100" value="50">
+                </div>
+            </div>
+        </div>
+
+        <div class="playlist">
+            <h2>Now Playing</h2>
+            <div id="nowPlaying">Select a mood to start</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
