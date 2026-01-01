@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Password Manager</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>Password Vault</h1>
+                <p class="subtitle">Secure. Local. Your Control.</p>
+            </div>
+        </header>
+
+        <main>
+            <!-- Master Password Setup -->
+            <section id="setup-section" class="section">
+                <h2>Welcome to Password Vault</h2>
+                <p>Set a strong master password to protect your credentials.</p>
+                <div class="form-group">
+                    <label for="master-password">Master Password</label>
+                    <input type="password" id="master-password" placeholder="Choose a strong password">
+                </div>
+                <div class="form-group">
+                    <label for="master-password-confirm">Confirm Password</label>
+                    <input type="password" id="master-password-confirm" placeholder="Confirm your password">
+                </div>
+                <button id="setup-btn" class="btn btn-primary">Initialize Vault</button>
+            </section>
+
+            <!-- Main App Interface -->
+            <section id="app-section" class="section" style="display: none;">
+                <div class="app-header">
+                    <h2>Your Passwords</h2>
+                    <button id="logout-btn" class="btn btn-secondary">Log Out</button>
+                </div>
+
+                <!-- Add New Password -->
+                <div class="add-password-section">
+                    <h3>Add New Credential</h3>
+                    <div class="form-group">
+                        <label for="site-name">Website/App</label>
+                        <input type="text" id="site-name" placeholder="e.g., Gmail">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" placeholder="e.g., user@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-input-group">
+                            <input type="password" id="password" placeholder="Enter password">
+                            <button id="generate-btn" class="btn-icon">Generate</button>
+                        </div>
+                    </div>
+                    <button id="add-password-btn" class="btn btn-primary">Add Credential</button>
+                </div>
+
+                <!-- Stored Passwords List -->
+                <div class="passwords-list-section">
+                    <h3>Stored Credentials</h3>
+                    <div id="passwords-list" class="passwords-list">
+                        <p class="empty-state">No credentials saved yet</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>All encryption happens locally. Your data never leaves your browser.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
