@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Modeler - Advanced Attack Surface Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ Threat Modeler</h1>
+            <p>Interactive Threat Modeling & Attack Surface Explorer</p>
+        </header>
+
+        <nav class="toolbar">
+            <div class="toolbar-section">
+                <button id="btnNewSystem" class="btn btn-primary">➕ New System</button>
+                <select id="presetSelect" class="input-select">
+                    <option value="">Load Preset Template...</option>
+                    <option value="saas">SaaS Web App</option>
+                    <option value="ecommerce">E-Commerce Platform</option>
+                    <option value="mobile-backend">Mobile + Backend</option>
+                    <option value="micro">Microservices</option>
+                </select>
+                <button id="btnClearAll" class="btn btn-secondary">🗑️ Clear</button>
+            </div>
+            <div class="toolbar-section">
+                <button id="btnAnalyze" class="btn btn-success">📊 Analyze Threats</button>
+                <button id="btnExportMD" class="btn btn-info">📄 Export Report</button>
+                <button id="btnExportJSON" class="btn btn-info">💾 Save JSON</button>
+            </div>
+        </nav>
+
+        <div class="main-content">
+            <!-- Left Sidebar: Node Types -->
+            <aside class="sidebar sidebar-left">
+                <h3>Component Types</h3>
+                <div class="component-palette">
+                    <div class="component-item" draggable="true" data-type="client">
+                        💻 Client/Browser
+                    </div>
+                    <div class="component-item" draggable="true" data-type="auth">
+                        🔐 Auth Service
+                    </div>
+                    <div class="component-item" draggable="true" data-type="api">
+                        🔌 API Server
+                    </div>
+                    <div class="component-item" draggable="true" data-type="database">
+                        🗄️ Database
+                    </div>
+                    <div class="component-item" draggable="true" data-type="cache">
+                        ⚡ Cache/Queue
+                    </div>
+                    <div class="component-item" draggable="true" data-type="third-party">
+                        🌐 Third-Party API
+                    </div>
+                    <div class="component-item" draggable="true" data-type="logs">
+                        📝 Logging System
+                    </div>
+                    <div class="component-item" draggable="true" data-type="cdn">
+                        🌍 CDN/Static
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Canvas Area -->
+            <div class="canvas-container">
+                <canvas id="canvas"></canvas>
+                <div id="contextMenu" class="context-menu" style="display: none;">
+                    <button class="context-item" data-action="edit">✏️ Edit</button>
+                    <button class="context-item" data-action="threats">🔍 View Threats</button>
+                    <button class="context-item" data-action="delete">🗑️ Delete</button>
+                    <button class="context-item" data-action="clone">📋 Clone</button>
+                </div>
+            </div>
+
+            <!-- Right Sidebar: Analysis Results -->
+            <aside class="sidebar sidebar-right">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="threats">Threats</button>
+                    <button class="tab-btn" data-tab="paths">Attack Paths</button>
+                    <button class="tab-btn" data-tab="stats">Statistics</button>
+                </div>
+                <div id="threatsPanel" class="tab-panel active">
+                    <div id="threatsList" class="threats-list">
+                        <p class="placeholder">Analyze system to see threats</p>
+                    </div>
+                </div>
+                <div id="pathsPanel" class="tab-panel">
+                    <div id="pathsList" class="paths-list">
+                        <p class="placeholder">Analyze system to see attack paths</p>
+                    </div>
+                </div>
+                <div id="statsPanel" class="tab-panel">
+                    <div id="statsContent" class="stats-content">
+                        <p class="placeholder">Analyze system to see statistics</p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Node Editor Modal -->
+    <div id="nodeEditorModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Edit Node</h2>
+            <form id="nodeForm">
+                <div class="form-group">
+                    <label>Node Name:</label>
+                    <input type="text" id="nodeName" required>
+                </div>
+                <div class="form-group">
+                    <label>Node Type:</label>
+                    <select id="nodeType" required>
+                        <option value="client">Client/Browser</option>
+                        <option value="auth">Auth Service</option>
+                        <option value="api">API Server</option>
+                        <option value="database">Database</option>
+                        <option value="cache">Cache/Queue</option>
+                        <option value="third-party">Third-Party API</option>
+                        <option value="logs">Logging System</option>
+                        <option value="cdn">CDN/Static</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Contains PII?</label>
+                    <input type="checkbox" id="nodeContainsPII">
+                </div>
+                <div class="form-group">
+                    <label>Requires HTTPS?</label>
+                    <input type="checkbox" id="nodeRequiresHTTPS" checked>
+                </div>
+                <div class="form-group">
+                    <label>Description:</label>
+                    <textarea id="nodeDescription" rows="3"></textarea>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEdit">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edge Editor Modal -->
+    <div id="edgeEditorModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Connection</h2>
+            <form id="edgeForm">
+                <div class="form-group">
+                    <label>Connection Label:</label>
+                    <input type="text" id="edgeLabel" placeholder="e.g., sends credentials, reads data">
+                </div>
+                <div class="form-group">
+                    <label>Transport Type:</label>
+                    <select id="edgeTransport" required>
+                        <option value="https">HTTPS (Encrypted)</option>
+                        <option value="http">HTTP (Unencrypted)</option>
+                        <option value="direct">Direct Access</option>
+                        <option value="queue">Async Queue</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Authentication Required?</label>
+                    <input type="checkbox" id="edgeAuthRequired" checked>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEdge">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
