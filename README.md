@@ -102,10 +102,8 @@ snakeeye-lab/
 
 ## 🚀 Current Status
 
-**Month**: Jan 2026 (Security & Tools)
-**Status**: IIn Progress
-**Next**: 3 production-ready projects: Secure Password Manager, Threat Modeler & Data Privacy Analyzer
-
+**Month**: Feb 2026 (AI/ML Local Experiments)**Status**: IIn Progress
+**Next**: 2 projects (Local ML Playground + On-Device Classifier)
 ---
 
 ## 📖 Getting Started
